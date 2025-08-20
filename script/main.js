@@ -241,7 +241,7 @@ function PreateLearningInfo() {
   const PrintData = CsvInfo.map((item, index) => {
     return `${createLine()}\n【${index + 1}】${item.title}\n\n${
       item.body
-    }\n${createLine()}\n\n`;
+    }\n${createLine()}\n`;
   }).join("\n");
 
   /* printDataの先頭にヘッダーを追加 */
