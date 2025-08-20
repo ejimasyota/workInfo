@@ -35,6 +35,8 @@ function displayPosts() {
   postList.innerHTML = "";
   // 2.ヘッダーのテキストにkeyに紐づく値をセット
   document.getElementById("headerText").textContent = currentKey;
+  // 3.タブ名を選択値に変更
+  document.querySelector("title").textContent = currentKey;
 
   /* 投稿内容の表示処理 */
   if (0 < savedPosts.length) {
