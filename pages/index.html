@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>学習サイト</title>
+    <link rel="stylesheet" href="../asetts/style.css" />
+  </head>
+  <body>
+    <header>
+      <h2 class="headerText">個人用学習サイト</h2>
+      <ul class="buttonGroup">
+        <li>
+          <button class="backupButton" onclick="CreateFullBackUp()">
+            バックアップ作成
+          </button>
+        </li>
+        <li>
+          <input type="file" id="csvFile" accept=".csv" style="display: none" />
+          <button class="readBackUpButton" onclick="ReadBackUp()">
+            バックアップ復元
+          </button>
+        </li>
+      </ul>
+    </header>
+
+    <main>
+      <div class="sideBar">
+        <div id="sectionContainer" class="sectionContainer">
+          <h3 class="sectionTitle">メニュー項目</h3>
+        </div>
+      </div>
+      <div class="menuList">
+        <div id="menuContainer" class="menuContainer"></div>
+      </div>
+    </main>
+    <script src="../script/public.js"></script>
+    <script src="../script/menu.js"></script>
+  </body>
+</html>

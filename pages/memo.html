@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="ja">
+  <head name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <title>メモ</title>
+    <link rel="stylesheet" href="../asetts/style.css" />
+  </head>
+  <body>
+    <header>
+      <h2 class="headerText" id="headerText"></h2>
+      <ul class="buttonGroup">
+        <li>
+          <button class="backupButton" onclick="PreateLearningInfo()">
+            学習内容の出力
+          </button>
+        </li>
+      </ul>
+    </header>
+    <div id="postList"></div>
+    <div id="imageModal" class="modal">
+      <span class="close" onclick="ModalCloseEvent()">&times;</span>
+      <img class="modalContent" id="modalImg" />
+    </div>
+
+    <footer class="input-footer">
+      <div class="footerContainer">
+        <div class="footerForm">
+          <input
+            type="text"
+            id="titleInput"
+            class="titleForm"
+            maxlength="100"
+            placeholder="投稿タイトル"
+          />
+          <textarea
+            id="bodyInput"
+            placeholder="説明"
+            class="bodyForm"
+          ></textarea>
+          <div class="footerBtnList">
+            <button onclick="addPost()" class="postButton">投稿</button>
+            <div>
+              <label for="imageInput" class="FileUploadButton">画像選択</label>
+              <input
+                type="file"
+                id="imageInput"
+                accept="image/*"
+                style="display: none"
+              />
+            </div>
+            <button onclick="clearEvent()" class="clearButton">クリア</button>
+            <button onclick="backPage()" id="backPageButton" class="backButton">
+              戻る
+            </button>
+          </div>
+        </div>
+      </div>
+    </footer>
+    <script src="../script/public.js"></script>
+    <script src="../script/main.js"></script>
+  </body>
+</html>

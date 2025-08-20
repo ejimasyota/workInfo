@@ -1,0 +1,540 @@
+/* ボディ */
+body {
+  font-family: sans-serif;
+  background-color: #f9f9f9;
+  margin: 0;
+  line-height: inherit;
+  overflow-y: hidden;
+}
+
+/* 全体にbox-sizingを指定 */
+* {
+  box-sizing: border-box;
+}
+
+/* ヘッダー */
+header {
+  background-color: #00ca92;
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 20px;
+}
+
+/* ヘッダーテキスト */
+.headerText {
+  color: white;
+  text-align: center;
+  line-height: 50px;
+  font-size: 24px;
+  margin: 0 auto;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+/* メニュー画面のヘッダーボタン群 */
+.buttonGroup {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  gap: 4px;
+}
+
+/* バックアップ作成ボタン */
+.backupButton {
+  border-radius: 8px;
+  background-color: #2e3aeb;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* バックアップ作成ボタンホバー時 */
+.backupButton:hover {
+  background-color: #2833c9;
+  cursor: pointer;
+}
+
+/* バックアップ読み取りボタン */
+.readBackUpButton {
+  border-radius: 8px;
+  background-color: #f33d82;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* バックアップ読み取りボタンホバー時 */
+.readBackUpButton:hover {
+  background-color: #d83674;
+  cursor: pointer;
+}
+
+/* ボタン */
+.buttonGroup button {
+  padding: 8px 12px;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+/* メニューコンテナ */
+main {
+  display: flex;
+  height: 100vh;
+}
+
+/* メニューリスト */
+.menuList {
+  margin: 20px;
+  overflow-y: scroll;
+  max-height: 650px;
+  width: 800px;
+}
+
+/* メニューの内容 */
+.menuContainer {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+}
+
+/* サイドバー */
+.sideBar {
+  background-color: #ededed;
+  padding: 10px;
+  width: 200px;
+}
+
+/* セクションコンテナ */
+.sectionContainer {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* セクションの上部のテキスト */
+.sectionTitle {
+  text-align: center;
+  margin: 0;
+  color: rgb(61, 61, 61);
+}
+
+/* セクションボタン */
+.sectionButton {
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #e6e6e6;
+  max-height: 50px;
+  min-height: 50px;
+}
+/* セクションボタンホバー時 */
+.sectionButton:hover {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+
+/* 選択中のセクションの背景色 */
+.sectionButton.selected {
+  background-color: #928dff;
+}
+
+/* セクションボタンのラベル */
+.sectionText {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: rgb(61, 61, 61);
+}
+
+/* ダイアログ表示時の背景 */
+.dialogBackdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 999;
+}
+
+/* ダイアログ */
+.dialogContainer {
+  z-index: 1000;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #e6e6e6;
+  max-height: 500px;
+  min-height: 100px;
+  padding: 10px;
+  width: fit-content;
+  min-width: 300px;
+}
+
+/* ダイアログ表示テキスト */
+.dialogMessage {
+  margin: 0;
+  text-align: center;
+  font-size: 20px;
+  color: rgb(61, 61, 61);
+}
+
+/* 閉じるボタン */
+.closeButton {
+  border-radius: 8px;
+  background-color: #4e55d4;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  margin-top: 10px;
+}
+/* 閉じるボタンホバー時 */
+.closeButton:hover {
+  background-color: #3b4b9a;
+  cursor: pointer;
+}
+
+/* コンファーム内のボタン要素の親 */
+.ConfirmButtonForm {
+  gap: 4px;
+  padding-top: 10px;
+}
+
+/* [はい]ボタン */
+.yesButton {
+  border-radius: 8px;
+  background-color: #d82958;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* [はい]ボタンホバー時 */
+.yesButton:hover {
+  background-color: #c1244e;
+  cursor: pointer;
+}
+
+/* [いいえ]ボタン */
+.noButton {
+  border-radius: 8px;
+  background-color: #4e55d4;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  margin-left: 4px;
+}
+/* [いいえ]ボタンホバー時 */
+.noButton:hover {
+  background-color: #3b4b9a;
+  cursor: pointer;
+}
+
+/* メニューのコンテンツボタン */
+.menuButton {
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #e6e6e6;
+  max-height: 100px;
+  min-height: 100px;
+}
+/* メニューのコンテンツホバー時 */
+.menuButton:hover {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+/* メニューのテキスト */
+.menuText {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: rgb(61, 61, 61);
+}
+/* アイコンのスタイル */
+.icon {
+  width: 50px;
+  height: 50px;
+  margin: 0;
+  background-size: cover;
+}
+
+/* 投稿フォームのスタイル */
+.footerContainer {
+  display: flex;
+  justify-content: center;
+}
+
+/* 投稿フォームの入力フィールド */
+.footerForm {
+  display: block;
+  width: 500px;
+  max-width: 500px;
+  margin: 5px 0;
+  padding: 8px;
+  font-size: 16px;
+}
+
+/* 投稿フォームのボタン群 */
+.footerBtnList {
+  gap: 4px;
+  display: flex;
+  justify-content: center;
+}
+
+/* 投稿ボタン */
+.postButton {
+  border-radius: 8px;
+  background-color: #00ca92;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* 投稿ボタンホバー時 */
+.postButton:hover {
+  background-color: #00a073;
+  cursor: pointer;
+}
+
+/* ファイルアップロードボタン */
+.FileUploadButton {
+  border-radius: 8px;
+  background-color: #9c4acc;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+/* ファイルアップロードボタンホバー時 */
+.FileUploadButton:hover {
+  background-color: #6c368b;
+  cursor: pointer;
+}
+
+/* クリアボタン */
+.clearButton {
+  border-radius: 8px;
+  background-color: #a3b638;
+  border: none;
+  font-weight: bold;
+  color: white;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* クリアボタンホバー時 */
+.clearButton:hover {
+  background-color: #83922d;
+  cursor: pointer;
+}
+/* 戻るボタン */
+.backButton {
+  background-color: #be6565;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+}
+/* 戻るボタンホバー時 */
+.backButton:hover {
+  background-color: #8b4a4a;
+  cursor: pointer;
+}
+
+/* 投稿フォームのタイトル */
+.titleForm {
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  display: block;
+  width: 90%;
+  max-width: 500px;
+  margin: 5px auto;
+  padding: 8px;
+  font-size: 16px;
+}
+/* 投稿フォームの説明 */
+.bodyForm {
+  width: 90%;
+  height: 100px;
+  resize: none;
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  display: block;
+  max-width: 500px;
+  margin: 5px auto;
+  padding: 8px;
+  font-size: 16px;
+}
+
+/* 投稿一覧 */
+#postList {
+  padding-top: 10px;
+  padding-left: 10px;
+  padding-right: 10px;
+  padding-bottom: 10px;
+  overflow-y: scroll;
+  height: 450px;
+  max-height: 450px;
+}
+
+/* 投稿内容 */
+.entry {
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background: white;
+  padding: 10px;
+  margin-bottom: 15px;
+}
+
+/* 投稿のタイトルエリア */
+.titleArea {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #00ca92;
+  border-radius: 8px;
+}
+/* 投稿のタイトルテキスト */
+.titleText {
+  color: white;
+  margin: 5px 0;
+  padding-left: 10px;
+  text-align: left;
+  font-size: 20px;
+  font-weight: bold;
+}
+.bodyInfo {
+  white-space: pre-wrap;
+  margin-left: 5px;
+  margin-bottom: 10px;
+  margin-right: 5px;
+  font-size: 16px;
+  margin-top: 0;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+}
+
+/* 削除・修正ボタンの親クラス */
+.buttonForm {
+  display: flex;
+}
+
+/* 修正ボタン */
+.editButton {
+  background-color: #2d87b1;
+  color: white;
+  border: none;
+  font-weight: bold;
+  border-radius: 8px;
+  padding: 10px 15px;
+  font-size: 16px;
+  width: 150px;
+  padding: 5px 10px;
+}
+/* 修正ボタンホバー時 */
+.editButton:hover {
+  background-color: #246e91;
+  cursor: pointer;
+}
+/* 削除ボタン */
+.deleteButton {
+  background-color: #af2020;
+  color: white;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  padding: 10px 15px;
+  font-size: 16px;
+  width: 150px;
+  margin-left: 8px;
+  padding: 5px 10px;
+}
+/* 削除ボタンホバー時 */
+.deleteButton:hover {
+  background-color: #8b1b1b;
+  cursor: pointer;
+}
+
+.input-footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background: #f9f9f9;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+}
+
+/* 画像 */
+.imgInfo {
+  cursor: pointer;
+  border-radius: 4px;
+  border: solid 1px;
+  max-width: 150px;
+  display: block;
+  margin: 4px;
+}
+
+/* モーダル */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  padding-top: 60px;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+/* モーダル内の画像 */
+.modalContent {
+  margin: auto;
+  display: block;
+  max-width: 85%;
+  max-height: 85%;
+  border-radius: 4px;
+}
+
+/* モーダル閉じるボタン */
+.close {
+  position: absolute;
+  top: 10px;
+  right: 35px;
+  color: white;
+  font-size: 65px;
+  font-weight: bolder;
+  cursor: pointer;
+}
