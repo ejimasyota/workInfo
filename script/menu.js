@@ -2,7 +2,6 @@
 // 1.メニューリストに表示する内容(今の構成ではkeyの値を変えたらデータにアクセスできなくなるので変えてはならない!!)
 const menuList = [
   { section: "自己学習", key: "調べたこと", icon: "" },
-  { section: "業務活用", key: "パスワード", icon: "" },
   { section: "基礎知識", key: "アクセス修飾子一覧", icon: "" },
   { section: "業務活用", key: "業務内のメモ", icon: "" },
   { section: "業務活用", key: "電話対応のメモ", icon: "" },
