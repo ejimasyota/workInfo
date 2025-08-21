@@ -87,6 +87,10 @@ function displayPosts() {
         img.className = "imgInfo";
         // 4.要素を追加
         div.appendChild(img);
+        // 5.ボタン要素を作成
+        const ImgCancelButton = document.createElement("button");
+        // 6.ボタンにクラスを設定
+        ImgCancelButton.className = "ImgCloseButton";
 
         /* 画像クリック時のイベントを定義 */
         img.addEventListener("click", () => {
