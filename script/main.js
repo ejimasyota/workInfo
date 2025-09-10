@@ -179,6 +179,16 @@ function displayPosts() {
       // 4.削除ボタンのクラスを設定
       deleteBtn.classList.add("ButtonInfo", "RedButton");
 
+      /* 出力ボタンの設定 */
+      // 1.出力ボタンを作成
+      const outputBtn = document.createElement("button");
+      // 2.出力ボタンのテキストを設定
+      outputBtn.textContent = "学習内容出力";
+      // 3.出力ボタンのクリックイベントを設定
+      outputBtn.onclick = () => PreateLearningInfo(index);
+      // 4.出力ボタンのクラスを設定
+      outputBtn.classList.add("ButtonInfo", "BlueButton");
+
       /* ボタンのラッパー要素 */
       // 1.親要素作成
       const buttonForm = document.createElement("div");
@@ -190,9 +200,11 @@ function displayPosts() {
       buttonForm.appendChild(editBtn);
       // 5.削除ボタン追加
       buttonForm.appendChild(deleteBtn);
-      // 6.投稿内容フォームに追加
+      // 6.出力ボタン追加
+      buttonForm.appendChild(outputBtn);
+      // 7.投稿内容フォームに追加
       div.appendChild(buttonForm);
-      // 7.投稿リストに投稿の要素を追加
+      // 8.投稿リストに投稿の要素を追加
       postList.appendChild(div);
     });
 
@@ -417,6 +429,59 @@ function PreateLearningInfo() {
   a.href = url;
   // 5.ファイル名設定
   a.download = `${LearningHeader}_${CreatYear()}.csv`;
+  // 6.アンカークリック時のイベントを発火
+  a.click();
+  // 7.URLの削除(ネット上のコピペのため不明点は調べる)
+  URL.revokeObjectURL(url);
+}
+
+/**
+ * 指定の投稿の出力
+ */
+function PreateLearningInfo(index) {
+  /* 事前定義 */
+  // 1.出力内容を保持する配列
+  const CsvInfo = [];
+  // 2.セッションに保持されているセクション名を取得
+  const SectionName = sessionStorage.getItem("SectionInfo");
+  // 3.学習内容のヘッダーを保持する
+  const LearningHeader = `${document
+    .getElementById("headerText")
+    .textContent.trim()}`;
+  // 4.指定の投稿を取得
+  const post = savedPosts[index];
+
+  /* 投稿内容の取得処理 */
+  if (post.key && post.key !== currentKey) {
+    return;
+  }
+  /* 投稿内容のタイトルと本文を取得 */
+  const CsvInfoItems = {
+    // 1.タイトル
+    title: post.title,
+    // 2.本文
+    body: post.body,
+  };
+  /* 出力内容を保持する配列にセット */
+  CsvInfo.push(CsvInfoItems);
+  /* 出力用にデータを整形 */
+  const PrintData = CsvInfo.map((item, index) => {
+    return `【${index + 1}】${item.title}\n\n${item.body}\n${createLine()}\n`;
+  }).join("\n");
+  /* printDataの先頭にヘッダーを追加 */
+  const csvData =
+    `\n【${SectionName} : ${LearningHeader}】\n${createLine()}\n\n` + PrintData;
+  /* ダウンロード処理 */
+  // 1.バイナリデータの作成
+  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  // 2.URLの作成
+  const url = URL.createObjectURL(blob);
+  // 3.アンカーの作成
+  const a = document.createElement("a");
+  // 4.遷移先に、項番2で作成したURLを設定
+  a.href = url;
+  // 5.ファイル名設定
+  a.download = `${post.title}_${CreatYear()}.csv`;
   // 6.アンカークリック時のイベントを発火
   a.click();
   // 7.URLの削除(ネット上のコピペのため不明点は調べる)
