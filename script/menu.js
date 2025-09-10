@@ -257,7 +257,7 @@ function CreateFullBackUp() {
   // 4.遷移先に、項番2で作成したURLを設定
   a.href = url;
   // 5.ファイル名設定
-  a.download = `学習データバックアップ_${CreatYear()}.csv`;
+  a.download = `フルバックアップ_${CreatYear()}.csv`;
   // 6.アンカークリック時のイベントを発火
   a.click();
   // 7.URLの削除(ネット上のコピペのため不明点は調べる)

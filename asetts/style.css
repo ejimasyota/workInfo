@@ -137,7 +137,8 @@ main {
 .menuList {
   margin: 20px;
   overflow-y: scroll;
-  max-height: 650px;
+  max-height: 630px;
+  height: 100%;
   width: 100%;
 }
 /* メニューの内容 */
