@@ -1,8 +1,16 @@
 /* 事前定義 */
-// 1.メニューリストに表示する内容(今の構成ではkeyの値を変えたらデータにアクセスできなくなるので変えてはならない!!)
+// 1.メニューリストに表示する内容
+/**********************************************************************************
+ * ※ 今の構成ではkeyの値を変えたらデータにアクセスできなくなるので変えてはならない!! ※ *
+ **********************************************************************************/
 const menuList = [
   { section: "自己学習", key: "調べたこと", icon: "" },
-  { section: "基礎知識", key: "アクセス修飾子一覧", icon: "" },
+  { section: "自己学習", key: "様々な攻撃", icon: "" },
+  { section: "自己学習", key: "様々なテスト", icon: "" },
+  { section: "自己学習", key: "アクセス修飾子一覧", icon: "" },
+  { section: "自己学習", key: "Web通信について", icon: "" },
+  { section: "自己学習", key: "ネットワークの基礎", icon: "" },
+  { section: "業務活用", key: "議事録", icon: "" },
   { section: "業務活用", key: "業務内のメモ", icon: "" },
   { section: "業務活用", key: "電話対応のメモ", icon: "" },
   { section: "業務活用", key: "勉強会のメモ", icon: "" },
@@ -30,19 +38,34 @@ const menuList = [
   { section: "基本情報", key: "ビジネスインダストリ", icon: "" },
   { section: "基本情報", key: "企業活動", icon: "" },
   { section: "基本情報", key: "法務", icon: "" },
-  { section: "基本情報", key: "プロジェクトマネジメント", icon: "" },
+  { section: "基本情報", key: "間違えた問題", icon: "" },
+  { section: "基本情報", key: "まとめて覚えたい内容", icon: "" },
+  { section: "基本情報", key: "計算公式", icon: "" },
 ];
 
 // 2.セクションリスト(これも上記と同様。いずれlocalStrageに保持するように変更して、カプセル化を行う)
 const sectionList = [
-  { section: "基礎知識", icon: "" },
   { section: "業務活用", icon: "" },
   { section: "自己学習", icon: "" },
   { section: "基本情報", icon: "" },
+  { section: "個人的", icon: "" },
 ];
+
+// 3.ダイアログのインスタンスを作成
+const dialog = new DialogInfo();
 
 /* 画面ロード時処理 */
 document.addEventListener("DOMContentLoaded", function () {
+  /* ヘッダーカラーの設定 */
+  // 1.ヘッダー要素を取得
+  const header = document.querySelector("header");
+  // 2.ストレージから背景色取得
+  const savedColorClass = localStorage.getItem("selectedHeaderColor");
+  // 3.背景色を設定
+  if (header && savedColorClass) {
+    header.classList.add(savedColorClass);
+  }
+
   /* 事前定義 */
   // 1.セクションの要素を取得
   const Section = document.getElementById("sectionContainer");
@@ -148,22 +171,21 @@ document.addEventListener("DOMContentLoaded", function () {
  * バックアップ読み取りボタン押下時
  */
 function ReadBackUp() {
-  // 1.ダイアログのインスタンスを作成
-  const dialog = new DialogInfo(
-    "バックアップの復元を行いますか? ※事前バックアップの作成を推奨します。"
-  );
-
-  // 2.ダイアログを表示
-  dialog.ShowConfirmDialog().then((result) => {
-    // 3.[はい]が押下された場合は画面を戻る
-    if (result) {
-      // 1.ファイル要素のイベントを発火
-      document.getElementById("csvFile").click();
-      // 4.[いいえ]が押下された場合は処理終了
-    } else {
-      return;
-    }
-  });
+  // 1.ダイアログを表示
+  dialog
+    .ShowConfirmDialog(
+      "バックアップの復元を行いますか? ※事前バックアップの作成を推奨します。"
+    )
+    .then((result) => {
+      /* [はい]が押下された場合 */
+      if (result) {
+        // 1.ファイル要素のイベントを発火
+        document.getElementById("csvFile").click();
+      } else {
+        /* [いいえ]が押下された場合 */
+        return;
+      }
+    });
 }
 
 /**
@@ -179,7 +201,7 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
   /* バックアップファイルを選択していないか、読み取れなかった場合 */
   if (!BackUpFile) {
     // 1.アラート表示
-    alert("ファイルを認識できませんでした。再度実行してください。");
+    dialog.ShowDialog("ファイルを認識できませんでした。再度実行してください。");
     // 2.処理終了
     return;
   }
@@ -196,7 +218,7 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
     // 3.バックアップから取得した内容をストレージにセット
     localStorage.setItem("savedPosts", BuckUpInfo);
     // 4.処理終了
-    alert("バックアップの復元が完了しました。");
+    dialog.ShowDialog("バックアップの復元が完了しました。");
     // 5.画面の再読み込み
     location.reload();
   };
@@ -206,7 +228,7 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
     // 1.デバッグログ
     console.error(e);
     // 2.アラート表示
-    alert("ファイルの読み込みに失敗しました。");
+    dialog.ShowDialog("ファイルの読み込みに失敗しました。");
   };
 });
 
@@ -220,7 +242,7 @@ function CreateFullBackUp() {
   /* バックアップするようなデータが存在しない場合 */
   if (!BuckUpData) {
     // 1.アラート表示
-    alert("バックアップデータが存在しません");
+    dialog.ShowDialog("バックアップデータが存在しません");
     // 2.処理終了
     return;
   }
@@ -262,4 +284,12 @@ function CreatYear() {
   const seconds = String(now.getSeconds()).padStart(2, "0");
   // 8.整形して返す
   return `${year}年${month}月${day}日_${hours}時${minutes}分${seconds}秒`;
+}
+
+/**
+ * ユーザー設定画面への遷移
+ */
+function UserInfo() {
+  // 1.ユーザー設定画面へ遷移
+  window.location.href = "../pages/userInfo.html";
 }

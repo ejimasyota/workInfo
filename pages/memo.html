@@ -4,17 +4,39 @@
     <meta charset="UTF-8" />
     <title></title>
     <link rel="stylesheet" href="../asetts/style.css" />
+    <link rel="stylesheet" href="../asetts/util.css" />
   </head>
   <body>
     <header>
       <h2 class="headerText" id="headerText"></h2>
+
       <ul class="buttonGroup">
         <li>
-          <button class="backupButton" onclick="PreateLearningInfo()">
-            学習内容の出力
+          <button class="ButtonInfo BlueButton" onclick="PreateLearningInfo()">
+            内容出力
+          </button>
+          <button class="ButtonInfo BlueButton" onclick="ScrollTop()">
+            一番上へ
+          </button>
+          <button class="ButtonInfo BlueButton" onclick="ScrollBottom()">
+            一番下へ
           </button>
         </li>
       </ul>
+
+      <div class="filterTool">
+        <button class="ButtonInfo BlueButton w-200" onclick="ClearSearch()">
+          検索クリア
+        </button>
+        <input
+          type="text"
+          id="SearchWordForm"
+          class="titleForm"
+          maxlength="100"
+          placeholder="フィルタリング"
+          onblur="SearchEvent()"
+        />
+      </div>
     </header>
     <div id="postList"></div>
     <div id="imageModal" class="modal">
@@ -22,37 +44,71 @@
       <img class="modalContent" id="modalImg" />
     </div>
 
-    <footer class="input-footer">
+    <footer>
       <div class="footerContainer">
-        <div class="footerForm">
-          <input
-            type="text"
-            id="titleInput"
-            class="titleForm"
-            maxlength="100"
-            placeholder="投稿タイトル"
-          />
-          <textarea
-            id="bodyInput"
-            placeholder="説明"
-            class="bodyForm"
-          ></textarea>
-          <div class="footerBtnList">
-            <button onclick="addPost()" class="postButton">投稿</button>
-            <div>
-              <label for="imageInput" class="FileUploadButton">画像選択</label>
-              <input
-                type="file"
-                id="imageInput"
-                accept="image/*"
-                style="display: none"
-              />
-            </div>
-            <button onclick="clearEvent()" class="clearButton">クリア</button>
-            <button onclick="backPage()" id="backPageButton" class="backButton">
-              戻る
-            </button>
+        <!-- 1段目 -->
+        <div class="footerInputContainer">
+          <!-- タイトル -->
+          <div>
+            <input
+              type="text"
+              id="titleInput"
+              class="titleForm w-500"
+              maxlength="100"
+              placeholder="投稿タイトル"
+            />
           </div>
+          <!-- 選択された画像 -->
+          <div>
+            <input
+              type="text"
+              id="SelectFileNameForm"
+              class="titleForm w-500"
+              maxlength="100"
+              placeholder="選択された画像"
+              disabled
+            />
+          </div>
+        </div>
+
+        <!-- 2段目 -->
+        <div class="footerTextAreaContainer">
+          <div>
+            <textarea
+              id="bodyInput"
+              placeholder="説明"
+              class="bodyForm min-w-1000 w-full"
+              style="min-width: 1004px"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- 3段目 -->
+        <div class="footerBtnList">
+          <button onclick="addPost()" class="ButtonInfo BlueButton">
+            投稿
+          </button>
+          <div>
+            <label for="imageInput" class="ButtonInfo PoupuleButton"
+              >画像選択</label
+            >
+            <input
+              type="file"
+              id="imageInput"
+              accept="image/*"
+              style="display: none"
+            />
+          </div>
+          <button onclick="clearEvent()" class="ButtonInfo YellowButton">
+            クリア
+          </button>
+          <button
+            onclick="backPage()"
+            id="backPageButton"
+            class="ButtonInfo RedButton"
+          >
+            戻る
+          </button>
         </div>
       </div>
     </footer>

@@ -38,6 +38,15 @@ header {
   white-space: nowrap;
 }
 
+.filterTool {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-left: auto;
+}
+/***************************************
+/* ボタン関係
+/***************************************/
 /* メニュー画面のヘッダーボタン群 */
 .buttonGroup {
   list-style: none;
@@ -46,75 +55,138 @@ header {
   display: flex;
   gap: 4px;
 }
-
-/* バックアップ作成ボタン */
-.backupButton {
-  border-radius: 8px;
-  background-color: #2e3aeb;
-  border: none;
-  font-weight: bold;
-  color: white;
+/* ボタンの基底クラス */
+.ButtonInfo {
   padding: 10px 15px;
   font-size: 16px;
-}
-/* バックアップ作成ボタンホバー時 */
-.backupButton:hover {
-  background-color: #2833c9;
-  cursor: pointer;
-}
-
-/* バックアップ読み取りボタン */
-.readBackUpButton {
-  border-radius: 8px;
-  background-color: #f33d82;
   border: none;
   font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
+  border-radius: 3px;
 }
-/* バックアップ読み取りボタンホバー時 */
-.readBackUpButton:hover {
-  background-color: #d83674;
-  cursor: pointer;
-}
-
-/* ボタン */
+/* ボタンコンテナ */
 .buttonGroup button {
   padding: 8px 12px;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
 }
+/* 青色ボタン */
+.BlueButton {
+  background-color: #2e3aeb;
+  color: white;
+}
+.BlueButton:hover {
+  background-color: #2833c9;
+  cursor: pointer;
+}
+/* ピンク色ボタン */
+.PinkButton {
+  background-color: #f33d82;
+  color: white;
+}
+.PinkButton:hover {
+  background-color: #d83674;
+  cursor: pointer;
+}
+/* 赤色ボタン */
+.RedButton {
+  background-color: #d82958;
+  color: white;
+}
+.RedButton:hover {
+  background-color: #c1244e;
+  cursor: pointer;
+}
+/* 黄色ボタン */
+.YellowButton {
+  background-color: #a3b638;
+  color: white;
+}
+.YellowButton:hover {
+  background-color: #83922d;
+  cursor: pointer;
+}
+/* 紫ボタン(画像投稿にのみ使用) */
+.PoupuleButton {
+  background-color: #9c4acc;
+  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.PoupuleButton:hover {
+  background-color: #6c368b;
+  cursor: pointer;
+}
 
+/* 削除・修正ボタンの親クラス */
+.PostButtonForm {
+  display: flex;
+  gap: 4px;
+}
+
+/***************************************
+/* メニュー関係
+/***************************************/
 /* メニューコンテナ */
 main {
   display: flex;
   height: 100vh;
 }
-
 /* メニューリスト */
 .menuList {
   margin: 20px;
   overflow-y: scroll;
   max-height: 650px;
-  width: 800px;
+  width: 100%;
 }
-
 /* メニューの内容 */
 .menuContainer {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
 }
+/* メニューのコンテンツボタン */
+.menuButton {
+  border-radius: 3px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #e6e6e6;
+  max-height: 100px;
+  min-height: 100px;
+  box-shadow: 0 0 6px gray;
+}
+/* メニューのコンテンツホバー時 */
+.menuButton:hover {
+  background-color: #cccccc;
+  cursor: pointer;
+}
+/* メニューのテキスト */
+.menuText {
+  margin: 0;
+  font-size: 20px;
+  font-weight: bold;
+  text-align: center;
+  color: rgb(61, 61, 61);
+}
+/* アイコンのスタイル */
+.icon {
+  width: 50px;
+  height: 50px;
+  margin: 0;
+  background-size: cover;
+}
 
+/***************************************
+/* セクション関係
+/***************************************/
 /* サイドバー */
 .sideBar {
   background-color: #ededed;
   padding: 10px;
-  width: 200px;
+  width: 250px;
+  border-radius: 4px;
+  box-shadow: 0 0 6px gray;
 }
-
 /* セクションコンテナ */
 .sectionContainer {
   height: 100%;
@@ -122,33 +194,30 @@ main {
   flex-direction: column;
   gap: 4px;
 }
-
 /* セクションの上部のテキスト */
 .sectionTitle {
   text-align: center;
   margin: 0;
   color: rgb(61, 61, 61);
 }
-
 /* セクションボタン */
 .sectionButton {
-  border-radius: 8px;
+  border-radius: 3px;
   border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
   background-color: #e6e6e6;
   max-height: 50px;
   min-height: 50px;
+  box-shadow: 0 0 6px gray;
 }
 /* セクションボタンホバー時 */
 .sectionButton:hover {
   background-color: #cccccc;
   cursor: pointer;
 }
-
 /* 選択中のセクションの背景色 */
 .sectionButton.selected {
   background-color: #928dff;
 }
-
 /* セクションボタンのラベル */
 .sectionText {
   margin: 0;
@@ -195,178 +264,48 @@ main {
   color: rgb(61, 61, 61);
 }
 
-/* 閉じるボタン */
-.closeButton {
-  border-radius: 8px;
-  background-color: #4e55d4;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-  margin-top: 10px;
-}
-/* 閉じるボタンホバー時 */
-.closeButton:hover {
-  background-color: #3b4b9a;
-  cursor: pointer;
-}
-
 /* コンファーム内のボタン要素の親 */
 .ConfirmButtonForm {
+  padding-top: 20px;
   gap: 4px;
-  padding-top: 10px;
+  display: flex;
 }
 
-/* [はい]ボタン */
-.yesButton {
-  border-radius: 8px;
-  background-color: #d82958;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-}
-/* [はい]ボタンホバー時 */
-.yesButton:hover {
-  background-color: #c1244e;
-  cursor: pointer;
-}
-
-/* [いいえ]ボタン */
-.noButton {
-  border-radius: 8px;
-  background-color: #4e55d4;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-  margin-left: 4px;
-}
-/* [いいえ]ボタンホバー時 */
-.noButton:hover {
-  background-color: #3b4b9a;
-  cursor: pointer;
-}
-
-/* メニューのコンテンツボタン */
-.menuButton {
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  background-color: #e6e6e6;
-  max-height: 100px;
-  min-height: 100px;
-}
-/* メニューのコンテンツホバー時 */
-.menuButton:hover {
-  background-color: #cccccc;
-  cursor: pointer;
-}
-/* メニューのテキスト */
-.menuText {
-  margin: 0;
-  font-size: 20px;
-  font-weight: bold;
-  text-align: center;
-  color: rgb(61, 61, 61);
-}
-/* アイコンのスタイル */
-.icon {
-  width: 50px;
-  height: 50px;
-  margin: 0;
-  background-size: cover;
-}
-
+/***************************************
+/* フッター関係
+/***************************************/
 /* 投稿フォームのスタイル */
 .footerContainer {
-  display: flex;
   justify-content: center;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  max-width: 100%;
+  background: #f9f9f9;
+  border-top: 1px solid #ccc;
+  padding: 10px;
+  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
+  z-index: 100;
 }
-
-/* 投稿フォームの入力フィールド */
-.footerForm {
-  display: block;
-  width: 500px;
-  max-width: 500px;
-  margin: 5px 0;
-  padding: 8px;
-  font-size: 16px;
+/* フッターの投稿入力フォーム : input */
+.footerInputContainer {
+  display: flex;
+  align-items: left;
+  width: 100%;
+  gap: 4px;
 }
-
+/* フッターの投稿入力フォーム : textarea */
+.footerTextAreaContainer {
+  display: flex;
+  align-items: left;
+  width: 100%;
+}
 /* 投稿フォームのボタン群 */
 .footerBtnList {
   gap: 4px;
   display: flex;
-  justify-content: center;
-}
-
-/* 投稿ボタン */
-.postButton {
-  border-radius: 8px;
-  background-color: #00ca92;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-}
-/* 投稿ボタンホバー時 */
-.postButton:hover {
-  background-color: #00a073;
-  cursor: pointer;
-}
-
-/* ファイルアップロードボタン */
-.FileUploadButton {
-  border-radius: 8px;
-  background-color: #9c4acc;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-/* ファイルアップロードボタンホバー時 */
-.FileUploadButton:hover {
-  background-color: #6c368b;
-  cursor: pointer;
-}
-
-/* クリアボタン */
-.clearButton {
-  border-radius: 8px;
-  background-color: #a3b638;
-  border: none;
-  font-weight: bold;
-  color: white;
-  padding: 10px 15px;
-  font-size: 16px;
-}
-/* クリアボタンホバー時 */
-.clearButton:hover {
-  background-color: #83922d;
-  cursor: pointer;
-}
-/* 戻るボタン */
-.backButton {
-  background-color: #be6565;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-}
-/* 戻るボタンホバー時 */
-.backButton:hover {
-  background-color: #8b4a4a;
-  cursor: pointer;
+  justify-content: left;
 }
 
 /* 投稿フォームのタイトル */
@@ -401,12 +340,12 @@ main {
   padding-right: 10px;
   padding-bottom: 10px;
   overflow-y: scroll;
-  height: 450px;
-  max-height: 450px;
+  height: 440px;
+  max-height: 440px;
 }
 
 /* 投稿内容 */
-.entry {
+.Entry {
   border-radius: 8px;
   border: 1px solid #ccc;
   background: white;
@@ -431,7 +370,8 @@ main {
   font-size: 20px;
   font-weight: bold;
 }
-.bodyInfo {
+/* 投稿内容の本文 */
+.PostBodyInfo {
   white-space: pre-wrap;
   margin-left: 5px;
   margin-bottom: 10px;
@@ -442,59 +382,9 @@ main {
   overflow-wrap: break-word;
 }
 
-/* 削除・修正ボタンの親クラス */
-.buttonForm {
-  display: flex;
-}
-
-/* 修正ボタン */
-.editButton {
-  background-color: #2d87b1;
-  color: white;
-  border: none;
-  font-weight: bold;
-  border-radius: 8px;
-  padding: 10px 15px;
-  font-size: 16px;
-  width: 150px;
-  padding: 5px 10px;
-}
-/* 修正ボタンホバー時 */
-.editButton:hover {
-  background-color: #246e91;
-  cursor: pointer;
-}
-/* 削除ボタン */
-.deleteButton {
-  background-color: #af2020;
-  color: white;
-  font-weight: bold;
-  border-radius: 8px;
-  border: none;
-  padding: 10px 15px;
-  font-size: 16px;
-  width: 150px;
-  margin-left: 8px;
-  padding: 5px 10px;
-}
-/* 削除ボタンホバー時 */
-.deleteButton:hover {
-  background-color: #8b1b1b;
-  cursor: pointer;
-}
-
-.input-footer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background: #f9f9f9;
-  border-top: 1px solid #ccc;
-  padding: 10px;
-  box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
-  z-index: 100;
-}
-
+/***************************************
+/* 画像関係
+/***************************************/
 /* 画像 */
 .imgInfo {
   cursor: pointer;
@@ -503,6 +393,28 @@ main {
   max-width: 150px;
   display: block;
   margin: 4px;
+}
+/* 画像削除ボタン */
+.ImgDeleteButton {
+  width: 20px;
+  height: 20px;
+  z-index: 10;
+  border-radius: 50%;
+  background-color: #ff4d4d;
+  font-weight: bold;
+  color: white;
+  border: solid 2px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 14px;
+  position: relative;
+  top: 10px;
+  right: 5px;
+}
+.ImgDeleteButton:hover {
+  background-color: #e14545;
 }
 
 /* モーダル */
@@ -537,4 +449,117 @@ main {
   font-size: 65px;
   font-weight: bolder;
   cursor: pointer;
+}
+
+/* コンテンツごとの枠線 */
+.ItemContainer {
+  position: relative;
+  margin: 10px;
+  margin-top: 45px;
+  border: solid 2px #c0c0c0;
+  border-radius: 6px;
+  padding: 10px;
+  width: 98%;
+}
+/* 枠線のラベル */
+.ItemLabel {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  padding-left: 5px;
+  padding-right: 5px;
+  padding-bottom: 0;
+  height: 20px;
+  left: 24px;
+  top: -18px;
+  background-color: #f9f9f9;
+  width: fit-content;
+}
+
+/* 基本色設定ボタン要素 */
+.CollorSetting {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: solid 1px #3f3f3f;
+}
+/* 基本色 */
+.SettingColor-green {
+  background-color: #00ca92;
+}
+.SettingColor-red {
+  background-color: #a4023d;
+}
+.SettingColor-black {
+  background-color: #3e3e3e;
+}
+.SettingColor-blue {
+  background-color: rgb(84, 84, 211);
+}
+.SettingColor-yellow {
+  background-color: rgb(186, 186, 0);
+}
+.SettingColor-purple {
+  background-color: rgb(172, 72, 172);
+}
+.SettingColor-orange {
+  background-color: rgb(221, 144, 0);
+}
+.SettingColor-pink {
+  background-color: rgb(253, 169, 183);
+}
+.SettingColor-brown {
+  background-color: rgb(142, 41, 41);
+}
+.SettingColor-gray {
+  background-color: rgb(143, 137, 137);
+}
+.SettingColor-cyan {
+  background-color: rgb(5, 182, 182);
+}
+.SettingColor-lime {
+  background-color: rgb(11, 180, 11);
+}
+
+/* 基本色設定のツールチップ関係 */
+.CollorSetting-wrapper {
+  position: relative;
+  display: inline-block;
+}
+.Tooltip {
+  visibility: hidden;
+  opacity: 0;
+  background-color: #333;
+  color: #fff;
+  text-align: center;
+  border-radius: 4px;
+  padding: 4px 8px;
+  position: absolute;
+  z-index: 1;
+  bottom: 110%;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+  transition: opacity 0.2s;
+  font-size: 12px;
+}
+
+.CollorSetting-wrapper:hover .Tooltip {
+  visibility: visible;
+  opacity: 1;
+}
+
+/* ユーザー情報画面のメイン */
+.userInfoMain {
+  background-color: #ededed;
+}
+
+/* ユーザー設定コンテナ */
+.userInfoContainer {
+  width: 700px;
+  margin-right: auto;
+  margin-left: auto;
+  background-color: #f9f9f9;
+  border-radius: 8px;
+  box-shadow: 0 0 6px gray;
 }

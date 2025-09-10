@@ -1,12 +1,6 @@
 class DialogInfo {
-  /* 初期化処理 */
-  constructor(message) {
-    // 1.ダイアログに表示するメッセージを設定
-    this.message = message ?? "";
-  }
-
   /* ダイアログの表示処理 */
-  ShowDialog() {
+  ShowDialog(message = "") {
     // 1.ダイアログの親要素の作成
     const dialogContainer = document.createElement("div");
     // 2.ダイアログの親要素のクラス名を設定
@@ -14,7 +8,7 @@ class DialogInfo {
     // 3.ダイアログ表示テキストの作成
     const dialogMessage = document.createElement("p");
     // 4.ダイアログ表示テキストにメッセージを設定
-    dialogMessage.textContent = this.message;
+    dialogMessage.textContent = message;
     // 5.表示テキストをセット
     dialogContainer.appendChild(dialogMessage);
     // 6.閉じるボタンの要素を作成
@@ -22,7 +16,7 @@ class DialogInfo {
     // 7.閉じるボタンのテキストを設定
     closeButton.textContent = "閉じる";
     // 8.閉じるボタンのクラス名を設定
-    closeButton.className = "closeButton";
+    closeButton.classList.add("ButtonInfo", "BlueButton");
     // 9.閉じるボタンをダイアログに追加
     dialogContainer.appendChild(closeButton);
     // 14.ダイアログ背景用の要素を作成
@@ -46,7 +40,7 @@ class DialogInfo {
   }
 
   /* コンファームの表示処理 */
-  ShowConfirmDialog() {
+  ShowConfirmDialog(message = "") {
     return new Promise((resolve) => {
       // 1.ダイアログの親要素の作成
       const dialogContainer = document.createElement("div");
@@ -55,7 +49,7 @@ class DialogInfo {
       // 3.ダイアログ表示テキストの作成
       const dialogMessage = document.createElement("p");
       // 4.ダイアログ表示テキストにメッセージを設定
-      dialogMessage.textContent = this.message;
+      dialogMessage.textContent = message;
       // 5.表示テキストをセット
       dialogContainer.appendChild(dialogMessage);
       // 6.[はい]ボタンの要素を作成
@@ -63,13 +57,13 @@ class DialogInfo {
       // 7.[はい]ボタンのテキストを設定
       yesButton.textContent = "はい";
       // 8.[はい]ボタンのクラス名を設定
-      yesButton.className = "yesButton";
+      yesButton.classList.add("ButtonInfo", "RedButton");
       // 9.[いいえ]ボタンの要素を作成
       const noButton = document.createElement("button");
       // 10.[いいえ]ボタンのテキストを設定
       noButton.textContent = "いいえ";
       // 11.[いいえ]ボタンのクラス名を設定
-      noButton.className = "noButton";
+      noButton.classList.add("ButtonInfo", "BlueButton");
       // 12.ボタン要素の親クラスを設定
       const ButtonForm = document.createElement("div");
       // 13.ボタン親要素のクラス名を設定

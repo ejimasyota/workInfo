@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ユーザー設定</title>
+    <link rel="stylesheet" href="../asetts/style.css" />
+    <link rel="stylesheet" href="../asetts/util.css" />
+  </head>
+  <body>
+    <header>
+      <h2 class="headerText">ユーザー設定</h2>
+      <button
+        onclick="backPage()"
+        id="backPageButton"
+        class="ButtonInfo RedButton"
+      >
+        戻る
+      </button>
+    </header>
+    <main class="userInfoMain">
+      <div class="userInfoContainer">
+        <div class="ItemContainer max-h-100">
+          <span class="ItemLabel">基本色設定</span>
+          <div class="d-flex gap-4 mt-20">
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-green"></button>
+              <span class="Tooltip">グリーン</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-red"></button>
+              <span class="Tooltip">レッド</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-black"></button>
+              <span class="Tooltip">ブラック</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-blue"></button>
+              <span class="Tooltip">ブルー</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-yellow"></button>
+              <span class="Tooltip">イエロー</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-purple"></button>
+              <span class="Tooltip">パープル</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-orange"></button>
+              <span class="Tooltip">オレンジ</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-pink"></button>
+              <span class="Tooltip">ピンク</span>
+            </div>
+
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-brown"></button>
+              <span class="Tooltip">ブラウン</span>
+            </div>
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-gray"></button>
+              <span class="Tooltip">グレー</span>
+            </div>
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-cyan"></button>
+              <span class="Tooltip">シアン</span>
+            </div>
+            <div class="CollorSetting-wrapper">
+              <button class="CollorSetting SettingColor-lime"></button>
+              <span class="Tooltip">ライム</span>
+            </div>
+          </div>
+        </div>
+        <div class="ItemContainer max-h-100">
+          <span class="ItemLabel">IPアドレス</span>
+          <div class="mt-20">
+            <input
+              type="text"
+              id="ipAddressForm"
+              class="titleForm w-full"
+              maxlength="100"
+              placeholder="※ 外部APIへの接続は怖いので現在機能停止中 ※"
+              disabled
+            />
+          </div>
+        </div>
+      </div>
+    </main>
+    <script src="../script/userInfo.js"></script>
+  </body>
+</html>
