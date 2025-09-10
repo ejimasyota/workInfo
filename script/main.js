@@ -185,7 +185,7 @@ function displayPosts() {
       // 2.出力ボタンのテキストを設定
       outputBtn.textContent = "学習内容出力";
       // 3.出力ボタンのクリックイベントを設定
-      outputBtn.onclick = () => PreateLearningInfo(index);
+      outputBtn.onclick = () => ContentCreateLearningInfo(index);
       // 4.出力ボタンのクラスを設定
       outputBtn.classList.add("ButtonInfo", "BlueButton");
 
@@ -438,7 +438,7 @@ function PreateLearningInfo() {
 /**
  * 指定の投稿の出力
  */
-function PreateLearningInfo(index) {
+function ContentCreateLearningInfo(index) {
   /* 事前定義 */
   // 1.出力内容を保持する配列
   const CsvInfo = [];
