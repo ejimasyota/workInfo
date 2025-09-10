@@ -335,6 +335,26 @@ function addPost() {
     return;
   }
 
+  /* 重複した投稿の存在をチェック | 更新年月日 : 2025/09/10 | 更新者 : 恵島 */
+  const isDuplicate = savedPosts.some((post, index) => {
+    // 1.編集中の投稿はスキップ
+    if (editingIndex !== null && editingIndex === index) {
+      return false;
+    }
+    // 2.タイトルが一致する投稿が存在するかチェック
+    return post.title === title && post.key === currentKey;
+  });
+
+  /* 重複が存在する場合は処理を終了 */
+  if (isDuplicate) {
+    // 1.ダイアログ表示
+    dialog.ShowDialog(
+      "重複した内容の投稿が存在します。タイトルを変更してください。"
+    );
+    // 2.処理終了
+    return;
+  }
+
   /* 投稿処理 */
   const finalize = (imageData) => {
     // 1.新しい投稿のデータを作成
