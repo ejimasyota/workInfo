@@ -341,7 +341,11 @@ function addPost() {
     if (editingIndex !== null && editingIndex === index) {
       return false;
     }
-    // 2.タイトルが一致する投稿が存在するかチェック
+    // 2.「間違えた問題」は重複チェック対象外(複数回投稿したいため)
+    if (post.key === "間違えた問題") {
+      return false;
+    }
+    // 3.タイトルが一致する投稿が存在するかチェック
     return post.title === title && post.key === currentKey;
   });
 
