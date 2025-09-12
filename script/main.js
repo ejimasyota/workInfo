@@ -69,11 +69,20 @@ function displayPosts() {
       const title = document.createElement("h2");
       // 2.タイトル要素にクラスを設定
       title.className = "titleText";
-      // 3.投稿のタイトルを設定
-      title.textContent = post.title;
-      // 4.タイトル領域要素内にタイトル要素を追加
+      // 3.[間違えた問題]の項目であればタイトルが重複している件数を表示
+      if (post.key === "間違えた問題" || post.key === "間違えた問題(計算)") {
+        const duplicateCount = savedPosts.filter(
+          (p) => p.title === post.title && p.key === post.key
+        ).length;
+        title.textContent = `${post.title} (間違えた回数 : ${duplicateCount}回)`;
+      } else {
+        // 4.通常のタイトル設定
+        title.textContent = post.title;
+      }
+
+      // 5.タイトル領域要素内にタイトル要素を追加
       titleArea.appendChild(title);
-      // 5.タイトル領域の要素を投稿要素に追加
+      // 6.タイトル領域の要素を投稿要素に追加
       div.appendChild(titleArea);
 
       /* 投稿の本文要素作成 */
@@ -342,7 +351,7 @@ function addPost() {
       return false;
     }
     // 2.「間違えた問題」は重複チェック対象外(複数回投稿したいため)
-    if (post.key === "間違えた問題") {
+    if (post.key === "間違えた問題" || post.key === "間違えた問題(計算)") {
       return false;
     }
     // 3.タイトルが一致する投稿が存在するかチェック
