@@ -2,13 +2,13 @@
 <html lang="ja">
   <head name="viewport" content="width=device-width, initial-scale=1.0">
     <meta charset="UTF-8" />
-    <title>学習システム</title>
+    <title>メモサイト</title>
     <link rel="stylesheet" href="../asetts/style.css" />
   </head>
   <body>
-    <header>
-      <h2 class="headerText">メニュー</h2>
-      <ul class="buttonGroup">
+    <header class="HeaderInfo DefoultHeader">
+      <h2 class="HeaderText">メニュー</h2>
+      <ul class="ButtonWrapper">
         <li>
           <button class="ButtonInfo BlueButton" onclick="CreateFullBackUp()">
             バックアップ作成
@@ -21,7 +21,13 @@
           </button>
         </li>
         <li>
-          <button class="ButtonInfo RedButton" onclick="UserInfo()">
+          <input type="file" id="csvFile" accept=".csv" style="display: none" />
+          <button class="ButtonInfo RedButton" onclick="AllDataDelete()">
+            データ削除
+          </button>
+        </li>
+        <li>
+          <button class="ButtonInfo PoupuleButton" onclick="UserInfo()">
             ユーザー設定
           </button>
         </li>
@@ -30,8 +36,8 @@
 
     <main>
       <div class="sideBar">
-        <div id="sectionContainer" class="sectionContainer">
-          <h3 class="sectionTitle">メニュー項目</h3>
+        <div id="SectionContainer" class="SectionContainer">
+          <h3 class="SectionLabel">メニュー項目</h3>
         </div>
       </div>
       <div class="menuList">
@@ -39,6 +45,7 @@
       </div>
     </main>
     <script src="../script/public.js"></script>
+    <script src="../script/utility.js"></script>
     <script src="../script/menu.js"></script>
   </body>
 </html>

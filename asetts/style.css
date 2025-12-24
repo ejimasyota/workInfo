@@ -1,4 +1,7 @@
-/* ボディ */
+/********************************
+/* 1. セレクタ
+/********************************/
+/* 1. ボディ */
 body {
   font-family: sans-serif;
   background-color: #f9f9f9;
@@ -6,27 +9,16 @@ body {
   line-height: inherit;
   overflow-y: hidden;
 }
-
-/* 全体にbox-sizingを指定 */
+/* 2. 全体にbox-sizingを指定 */
 * {
   box-sizing: border-box;
 }
 
-/* ヘッダー */
-header {
-  background-color: #00ca92;
-  width: 100%;
-  height: 50px;
-  margin: 0;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: relative;
-  padding: 0 20px;
-}
-
-/* ヘッダーテキスト */
-.headerText {
+/********************************
+/* 2. ヘッダー
+/********************************/
+/* 1. ヘッダーテキスト */
+.HeaderText {
   color: white;
   text-align: center;
   line-height: 50px;
@@ -37,25 +29,45 @@ header {
   transform: translateX(-50%);
   white-space: nowrap;
 }
+/* 2. ヘッダー基底クラス */
+.HeaderInfo{
+  width: 100%;
+  height: 50px;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: relative;
+  padding: 0 20px;
+}
+/* 3. ヘッダー : デフォルト */
+.DefoultHeader {
+  background-color: #00ca92;
+}
 
-.filterTool {
+/********************************
+/* 3. ラッパー
+/********************************/
+/* 1. 検索フィルターラッパー */
+.SearchFilterWrapper {
   display: flex;
   align-items: center;
   gap: 8px;
   margin-left: auto;
 }
-/***************************************
-/* ボタン関係
-/***************************************/
-/* メニュー画面のヘッダーボタン群 */
-.buttonGroup {
+/* 2. メニュー画面のヘッダーボタン群 */
+.ButtonWrapper {
   list-style: none;
   margin: 0;
   padding: 0;
   display: flex;
   gap: 4px;
 }
-/* ボタンの基底クラス */
+
+/***************************************
+/* 4. ボタン関係
+/***************************************/
+/* 1. ボタンの基底クラス */
 .ButtonInfo {
   padding: 10px 15px;
   font-size: 16px;
@@ -63,14 +75,14 @@ header {
   font-weight: bold;
   border-radius: 3px;
 }
-/* ボタンコンテナ */
-.buttonGroup button {
+/* 2. ボタンコンテナ */
+.ButtonWrapper button {
   padding: 8px 12px;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
 }
-/* 青色ボタン */
+/* 3. 青色ボタン */
 .BlueButton {
   background-color: #2e3aeb;
   color: white;
@@ -79,7 +91,7 @@ header {
   background-color: #2833c9;
   cursor: pointer;
 }
-/* ピンク色ボタン */
+/* 4. ピンク色ボタン */
 .PinkButton {
   background-color: #f33d82;
   color: white;
@@ -88,7 +100,7 @@ header {
   background-color: #d83674;
   cursor: pointer;
 }
-/* 赤色ボタン */
+/* 5. 赤色ボタン */
 .RedButton {
   background-color: #d82958;
   color: white;
@@ -97,7 +109,7 @@ header {
   background-color: #c1244e;
   cursor: pointer;
 }
-/* 黄色ボタン */
+/* 6. 黄色ボタン */
 .YellowButton {
   background-color: #a3b638;
   color: white;
@@ -106,7 +118,7 @@ header {
   background-color: #83922d;
   cursor: pointer;
 }
-/* 紫ボタン(画像投稿にのみ使用) */
+/* 7. 紫ボタン */
 .PoupuleButton {
   background-color: #9c4acc;
   color: white;
@@ -119,8 +131,8 @@ header {
   cursor: pointer;
 }
 
-/* 削除・修正ボタンの親クラス */
-.PostButtonForm {
+/* 8. 削除・修正ボタンの親クラス */
+.PostButtonWrapper {
   display: flex;
   gap: 4px;
 }
@@ -170,11 +182,13 @@ main {
   color: rgb(61, 61, 61);
 }
 /* アイコンのスタイル */
-.icon {
-  width: 50px;
-  height: 50px;
+.IconImg {
+  width: 40px;
+  height: 40px;
   margin: 0;
   background-size: cover;
+  display: flex;
+  align-items: flex-end;
 }
 
 /***************************************
@@ -189,14 +203,14 @@ main {
   box-shadow: 0 0 6px gray;
 }
 /* セクションコンテナ */
-.sectionContainer {
+.SectionContainer {
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
 /* セクションの上部のテキスト */
-.sectionTitle {
+.SectionLabel {
   text-align: center;
   margin: 0;
   color: rgb(61, 61, 61);
@@ -237,6 +251,43 @@ main {
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 999;
+}
+
+/* マークダウン関連 */
+.md-h2 {
+  font-size: 1.4rem;
+  font-weight: bold;
+  margin-bottom: 0;
+  margin-top: 0;
+  border-bottom: 2px solid #444;
+}
+.md-h3 {
+  margin-bottom: 0;
+  margin-top: 0;
+  font-size: 1.2rem;
+  font-weight: bold;
+
+}
+.md-link {
+  color: #1a73e8;
+  text-decoration: underline;
+}
+.md-link:hover {
+  color: #0b59c7;
+}
+.CodeBlock {
+  display: flex;
+  background: #f7f7f7;
+  border: 1px solid #ddd;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 10px;
+  padding-top: 0;
+  margin-top:10px;
+  margin-bottom: 0;
+  overflow-x: auto;
+  border-radius: 4px;
+  white-space: pre;
 }
 
 /* ダイアログ */
@@ -346,7 +397,7 @@ main {
 }
 
 /* 投稿内容 */
-.Entry {
+.PostListWrapper {
   border-radius: 8px;
   border: 1px solid #ccc;
   background: white;
@@ -355,15 +406,15 @@ main {
 }
 
 /* 投稿のタイトルエリア */
-.titleArea {
+.PostTitleWrapper {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  background-color: #00ca92;
   border-radius: 8px;
 }
+
 /* 投稿のタイトルテキスト */
-.titleText {
+.PostTitle {
   color: white;
   margin: 5px 0;
   padding-left: 10px;
@@ -375,8 +426,6 @@ main {
 .PostBodyInfo {
   white-space: pre-wrap;
   margin-left: 5px;
-  margin-bottom: 10px;
-  margin-right: 5px;
   font-size: 16px;
   margin-top: 0;
   word-wrap: break-word;
@@ -387,7 +436,7 @@ main {
 /* 画像関係
 /***************************************/
 /* 画像 */
-.imgInfo {
+.PostImgInfo {
   cursor: pointer;
   border-radius: 4px;
   border: solid 1px;
@@ -460,7 +509,7 @@ main {
   border: solid 2px #c0c0c0;
   border-radius: 6px;
   padding: 10px;
-  width: 98%;
+  width: 97%;
 }
 /* 枠線のラベル */
 .ItemLabel {
@@ -563,4 +612,47 @@ main {
   background-color: #f9f9f9;
   border-radius: 8px;
   box-shadow: 0 0 6px gray;
+}
+
+/* 入力欄ダイアログ : 2025/11/06 */
+.DialogContainer {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border: 2px solid #fff;
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #e6e6e6;
+  padding: 12px;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  min-width: 400px;
+}
+
+body.DialogActive {
+  pointer-events: none;
+}
+
+body.DialogActive .DialogContainer {
+  pointer-events: auto;
+}
+
+.TextAreaFormForDialog {
+  font-size: 16px;
+  border-radius: 8px;
+  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  background-color: #fff;
+  resize: none;
+  padding: 4px;
+  box-sizing: border-box;
+  display: block;
+  margin: 5px auto 10px auto;
+}
+
+.SummaryDialogButtonForm {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 5px;
 }

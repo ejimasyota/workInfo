@@ -8,8 +8,8 @@
     <link rel="stylesheet" href="../asetts/util.css" />
   </head>
   <body>
-    <header>
-      <h2 class="headerText">ユーザー設定</h2>
+    <header class="HeaderInfo DefoultHeader">
+      <h2 class="HeaderText">ユーザー設定</h2>
       <button
         onclick="backPage()"
         id="backPageButton"
@@ -81,18 +81,6 @@
             </div>
           </div>
         </div>
-        <div class="ItemContainer max-h-100">
-          <span class="ItemLabel">IPアドレス</span>
-          <div class="mt-20">
-            <input
-              type="text"
-              id="ipAddressForm"
-              class="titleForm w-full"
-              maxlength="100"
-              placeholder="※ 外部APIへの接続は怖いので現在機能停止中 ※"
-              disabled
-            />
-          </div>
         </div>
       </div>
     </main>

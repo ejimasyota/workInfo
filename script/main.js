@@ -1,240 +1,358 @@
-/* 事前定義 */
-// 1.投稿された内容の保持
-let savedPosts = [];
-// 2.編集中の投稿のインデックス
-let editingIndex = null;
-// 3.投稿リストの要素を取得
-const postList = document.getElementById("postList");
-// 4.URLパラメータ取得
-const urlParams = new URLSearchParams(window.location.search);
-// 5.現在のキーを取得
-const currentKey = urlParams.get("key");
-// 6.画像用カウンタ
-let ImageCount = 0;
-// 7.ダイアログのインスタンスを作成
-const dialog = new DialogInfo();
+/* ==========================================================
+ * 事前定義
+ * ========================================================== */
+// 1. 投稿された内容の保持する
+let SavePostArray = [];
+// 2. 編集中の投稿のインデックス
+let EditIndex = null;
+// 3. 投稿リストの要素を取得
+const PostListElement = document.getElementById("postList");
+// 4. URLパラメータ取得
+const UrlParam = new URLSearchParams(window.location.search);
+// 5. 現在のキーを取得
+const CurrentKey = UrlParam.get("key");
+// 6. ダイアログのインスタンスを作成
+const DialogIncetance = new DialogInfo();
+// 7. ストレージから背景色取得
+const SavedColorClass = localStorage.getItem("selectedHeaderColor");
 
-/* 画面ロード時処理 */
+/* ==========================================================
+ * 画面ロード時処理
+ * ========================================================== */
 document.addEventListener("DOMContentLoaded", () => {
-  /* 投稿の表示 */
-  // 1.投稿された内容の取得
-  const data = localStorage.getItem("savedPosts");
-  // 2.データが存在する場合はJSON形式に変換して保存
-  savedPosts = data ? JSON.parse(data) : [];
-  // 3.画面の表示処理
-  displayPosts();
+ /* ------------------------------
+  *  1. 投稿の表示
+  * ------------------------------ */
+  // 1. 投稿された内容の取得
+  const StrageSavePost = localStorage.getItem("savedPosts");
+  // 2. データが存在する場合はJSON形式に変換して保存
+  SavePostArray = StrageSavePost ? JSON.parse(StrageSavePost) : [];
+  // 3. データを選択されたメニュー項目の内容に絞り込み
+  SavePostArray = SavePostArray.filter((Post) => Post.key === CurrentKey)
+  // 4. 画面の表示処理
+  DisplayPostList();
+
+ /* ---------------------------------------------
+  *  2. ヘッダーの背景色を設定
+  * --------------------------------------------- */
+  /* 1. 事前定義 */
+  // 1. ヘッダー要素を取得
+  const HeaderElement = document.querySelector(".HeaderInfo");
+
+  /* 2. ヘッダーとストレージに背景色が存在する場合 */
+  if (HeaderElement && SavedColorClass) {
+    // 2. ヘッダー要素からクラスを順次除去
+    Array.from(HeaderElement.classList).forEach((Class)=>{
+      HeaderElement.classList.remove(Class)
+    });
+    // 3. ヘッダーの基底クラスとストレージに保管された背景色クラスを設定
+    HeaderElement.classList.add("HeaderInfo", SavedColorClass);
+  }
 });
 
-/* 投稿内容の保存処理 */
-function savePosts() {
-  // 1.ストレージへ投稿内容を保存
-  localStorage.setItem("savedPosts", JSON.stringify(savedPosts));
+/**
+ * 投稿内容の保存処理
+ * @returns {void}
+ */
+function SavePostList() {
+  // 1. ストレージへ投稿内容を保存
+  localStorage.setItem("savedPosts", JSON.stringify(SavePostArray));
 }
 
-/* 投稿の表示処理 */
-function displayPosts() {
-  /* 事前処理 */
-  // 1.投稿リストの内容を初期化
-  postList.innerHTML = "";
-  // 2.ヘッダーのテキストにkeyに紐づく値をセット
-  document.getElementById("headerText").textContent = currentKey;
-  // 3.タブ名を選択値に変更
-  document.querySelector("title").textContent = currentKey;
+/**
+ * 投稿の表示処理
+ * @returns {void}
+ */
+function DisplayPostList() {
+ /* ==========================================================
+  * 事前定義
+  * ========================================================== */
+  // 1. 投稿リストの内容を初期化
+  PostListElement.innerHTML = "";
+  // 2. ヘッダーのテキストにkeyに紐づく値をセット
+  document.getElementById("HeaderText").textContent = CurrentKey;
+  // 3. タブ名を選択値に変更
+  document.querySelector("title").textContent = CurrentKey;
 
-  /* 投稿内容の表示処理 */
-  if (0 < savedPosts.length) {
-    /* 投稿されている内容分の処理を行う */
-    savedPosts.forEach((post, index) => {
-      /* 投稿のキーが現在のキーと一致しない場合はスキップ */
-      if (post.key && post.key !== currentKey) {
+ /* ==========================================================
+  * 投稿内容の表示処理
+  * ========================================================== */
+  if (0 < SavePostArray.length) {
+    SavePostArray.forEach((Post, Index) => {
+     /* ---------------------------------------------
+      *  1. 投稿のキーが現在のキーと一致しない場合
+      * --------------------------------------------- */
+      if (Post.key && Post.key !== CurrentKey) {
+        // 1. 処理スキップ
         return;
       }
 
-      /* 投稿内容のラッパー要素作成 */
-      // 1.投稿の要素を作成
-      const div = document.createElement("div");
-      // 2.投稿のクラスを設定
-      div.className = "Entry";
+     /* ---------------------------------------------
+      *  2. 投稿内容のラッパー要素作成
+      * --------------------------------------------- */
+      // 1. グループ要素を作成
+      const PostListWrapper = document.createElement("div");
+      // 2. クラスを設定
+      PostListWrapper.className = "PostListWrapper";
 
-      /* 投稿のタイトルラッパー要素作成 */
-      // 1.投稿のタイトル領域の要素を作成
-      const titleArea = document.createElement("div");
-      // 2.タイトル領域の要素にクラスを設定
-      titleArea.className = "titleArea";
-      // 3.タイトルエリアにIDを設定
-      titleArea.id = "titleArea";
+     /* ---------------------------------------------
+      *  3. 投稿タイトルのラッパー要素作成
+      * --------------------------------------------- */
+      // 1. グループ要素を作成
+      const PostTitleWrapper = document.createElement("div");
+      // 2. クラスを設定
+      PostTitleWrapper.classList.add("PostTitleWrapper", "DefoultHeader");
 
-      /* タイトル設定 */
-      // 1.タイトル要素を作成
-      const title = document.createElement("h2");
-      // 2.タイトル要素にクラスを設定
-      title.className = "titleText";
-      // 3.投稿のタイトルを設定
-      title.textContent = post.title;
-      // 4.タイトル領域要素内にタイトル要素を追加
-      titleArea.appendChild(title);
-      // 5.タイトル領域の要素を投稿要素に追加
-      div.appendChild(titleArea);
+     /* ---------------------------------------------
+      *  4. 投稿タイトル作成
+      * --------------------------------------------- */
+      // 1. テキスト要素を作成
+      const PostTitle = document.createElement("h2");
+      // 2. クラスを設定
+      PostTitle.className = "PostTitle";
+      // 3. ラベル設定
+      PostTitle.textContent = Post.title;
+      // 4. タイトルラッパーにタイトルを格納
+      PostTitleWrapper.appendChild(PostTitle);
+      // 5. タイトルラッパーを投稿内容ラッパーに格納
+      PostListWrapper.appendChild(PostTitleWrapper);
+   
+     /* ---------------------------------------------
+      *  5. 投稿本文作成
+      * --------------------------------------------- */
+      // 1. テキスト要素を作成
+      const PostBody = document.createElement("p");
+      // 2. クラスを設定
+      PostBody.className = "PostBodyInfo";
+      // 3. 投稿本文の内容を設定
+      PostBody.innerHTML = convertMarkdown(Post.body);
+      // 4. 投稿本文を投稿内容ラッパーに格納
+      PostListWrapper.appendChild(PostBody);
 
-      /* 投稿の本文要素作成 */
-      // 1.投稿の本文要素を作成
-      const body = document.createElement("p");
-      // 2.投稿の本文にクラスを設定
-      body.className = "PostBodyInfo";
-      // 3.ボディの内容を設定
-      body.textContent = post.body;
-      // 4.投稿の要素に本文を追加
-      div.appendChild(body);
+     /* ---------------------------------------------
+      *  5. 投稿に画像が存在する場合
+      * --------------------------------------------- */
+      if (Post.image) {
+        /* 1. 画像ラッパー作成 */
+        // 1. グループ要素を作成
+        const ImgWrapper = document.createElement("div");
 
-      /* 投稿に画像がある場合は画像要素を作成 */
-      if (post.image) {
-        /* img親要素作成 */
-        // 1.投稿の画像要素の親要素を作成
-        const imgWrapper = document.createElement("div");
-        // 2.親要素にクラスを設定
-        imgWrapper.className = "imgWrapper";
+        /* 2. 画像要素の作成 */
+        // 1. img要素の作成
+        const ImgElement = document.createElement("img");
+        // 2. 画像パスに投稿パスを設定
+        ImgElement.src = Post.image;
+        // 3. クラスを設定
+        ImgElement.className = "PostImgInfo";
 
-        /* 画像要素の作成 */
-        // 1.img要素の作成
-        const img = document.createElement("img");
-        // 2.画像パスに投稿パスを設定
-        img.src = post.image;
-        // 3.画像のクラスを設定
-        img.className = "imgInfo";
-
-        /* 画像削除ボタンの作成 */
-        // 1.画像削除ボタン要素を作成
+        /* 3. 画像削除ボタンの作成 */
+        // 1. ボタン要素を作成
         const ImgDeleteButton = document.createElement("span");
-        // 2.ボタンにクラスを設定
+        // 2. クラスを設定
         ImgDeleteButton.className = "ImgDeleteButton";
-        // 3.ボタンのテキストを設定
+        // 3. ラベルを設定
         ImgDeleteButton.textContent = "×";
 
-        /* 各要素を設定 */
-        // 1.親要素に画像削除ボタンを追加
-        imgWrapper.appendChild(ImgDeleteButton);
-        // 2.親要素に画像を追加
-        imgWrapper.appendChild(img);
-        // 3.要素を追加
-        div.appendChild(imgWrapper);
+        /* 4. DOMの組み立て */
+        // 1. 画像ラッパーに画像削除ボタンを格納
+        ImgWrapper.appendChild(ImgDeleteButton);
+        // 2. 画像ラッパーに画像を格納
+        ImgWrapper.appendChild(ImgElement);
+        // 3. 投稿内容ラッパーに画像ラッパーを格納
+        PostListWrapper.appendChild(ImgWrapper);
 
-        /* 画像クリック時のイベントを定義 */
-        img.addEventListener("click", () => {
-          // 1.モーダルを表示
-          document.getElementById("imageModal").style.display = "block";
-          // 2.モーダルに表示する画像を設定
-          document.getElementById("modalImg").src = img.src;
+        /* 5. 画像クリック時イベント */
+        ImgElement.addEventListener("click", () => {
+          // 1. 画像ダイアログを表示
+          document.getElementById("ImgDialog").style.display = "block";
+          // 2. 画像ダイアログに画像を設定
+          document.getElementById("modalImg").src = ImgElement.src;
         });
 
-        /* 画像削除ボタンクリック時のイベントを定義 */
+        /* 6. 画像削除ボタンクリック時イベント */
         ImgDeleteButton.addEventListener("click", () => {
-          dialog
-            .ShowConfirmDialog("画像の削除を行います。よろしいですか？")
-            .then((result) => {
-              /* [はい]が押下された場合は画面を戻る */
-              if (result) {
-                // 1.投稿から画像を削除
-                post.image = null;
-                // 2.画像名を削除
-                post.imagename = null;
-                // 3.画面の再表示
-                displayPosts();
-              } else {
-                /* [いいえ]が押下された場合は処理終了 */
-                return;
-              }
-            });
+          DialogIncetance.ShowConfirmDialog(GetMessageInfo("confirm", "002", "画像")).then((Result) => {
+            /* [はい]が押下された場合 */
+            if (Result) {
+              // 1. 投稿から画像を削除
+              Post.image = null;
+              // 2. 画像名を削除
+              Post.imagename = null;
+              // 3. 画面の再表示
+              DisplayPostList();
+
+            /* [いいえ]が押下された場合 */
+            } else {
+              // 1. 処理終了
+              return;
+            }
+          });
         });
       }
 
-      /* コピーボタンの設定 */
-      // 1.コピーボタンを作成
-      const copyBtn = document.createElement("button");
-      // 2.コピーボタンのテキストを設定
-      copyBtn.textContent = "コピー";
-      // 3.コピーボタンのクリックイベントを設定
-      copyBtn.onclick = () => PostCopy(body, index);
-      // 4.コピーボタンのクラスを設定
-      copyBtn.classList.add("ButtonInfo", "PoupuleButton");
-      // 5.コピーボタンのIDを設定(querySelectorではほかに影響が出そうなので)
-      copyBtn.id = `copyBtn-${index}`;
+     /* ---------------------------------------------
+      *  6. コピーボタンの作成
+      * --------------------------------------------- */
+      // 1. ボタン要素を作成
+      const CopyButton = document.createElement("button");
+      // 2. ラベルを設定
+      CopyButton.textContent = "コピー";
+      // 3. クラスを設定
+      CopyButton.classList.add("ButtonInfo", "PoupuleButton");
+      // 4. IDを設定(querySelectorではほかに影響が出そうなので)
+      CopyButton.id = `CopyButton-${Index}`;
 
-      /* 編集ボタンの設定 */
-      // 1.編集ボタンを作成
-      const editBtn = document.createElement("button");
-      // 2.編集ボタンのテキストを設定
-      editBtn.textContent = "修正";
-      // 3.編集ボタンのクリックイベントを設定
-      editBtn.onclick = () => editPost(index);
-      // 4.編集ボタンのクラスを設定
-      editBtn.classList.add("ButtonInfo", "BlueButton");
+     /* ---------------------------------------------
+      *  7. コピーボタンのクリックイベント
+      * --------------------------------------------- */
+      CopyButton.onclick = () => {
+        // 1. 投稿内容コピー処理を呼び出し
+        PostCopy(PostBody, Index);
+      };
 
-      /* 削除ボタンの設定 */
-      // 1.削除ボタンを作成
-      const deleteBtn = document.createElement("button");
-      // 2.削除ボタンのテキストを設定
-      deleteBtn.textContent = "削除";
-      // 3.削除ボタンのクリックイベントを設定
-      deleteBtn.onclick = () => deletePost(index);
-      // 4.削除ボタンのクラスを設定
-      deleteBtn.classList.add("ButtonInfo", "RedButton");
+     /* ---------------------------------------------
+      *  8. 編集ボタンの作成
+      * --------------------------------------------- */
+      // 1. ボタン要素を作成
+      const EditButton = document.createElement("button");
+      // 2. ラベルを設定
+      EditButton.textContent = "修正";
+      // 3. クラスを設定
+      EditButton.classList.add("ButtonInfo", "BlueButton");
 
-      /* 出力ボタンの設定 */
-      // 1.出力ボタンを作成
-      const outputBtn = document.createElement("button");
-      // 2.出力ボタンのテキストを設定
-      outputBtn.textContent = "学習内容出力";
-      // 3.出力ボタンのクリックイベントを設定
-      outputBtn.onclick = () => ContentCreateLearningInfo(index);
-      // 4.出力ボタンのクラスを設定
-      outputBtn.classList.add("ButtonInfo", "BlueButton");
+     /* ---------------------------------------------
+      *  9. 編集ボタンのクリックイベント
+      * --------------------------------------------- */
+      EditButton.onclick = () => {
+        // 1. 投稿内容編集処理の呼び出し
+        EditPostInfo(Index);
+      };
 
-      /* ボタンのラッパー要素 */
-      // 1.親要素作成
-      const buttonForm = document.createElement("div");
-      // 2.クラス設定
-      buttonForm.className = "PostButtonForm";
-      // 3.コピーボタン追加
-      buttonForm.appendChild(copyBtn);
-      // 4.編集ボタン追加
-      buttonForm.appendChild(editBtn);
-      // 5.削除ボタン追加
-      buttonForm.appendChild(deleteBtn);
-      // 6.出力ボタン追加
-      buttonForm.appendChild(outputBtn);
-      // 7.投稿内容フォームに追加
-      div.appendChild(buttonForm);
-      // 8.投稿リストに投稿の要素を追加
-      postList.appendChild(div);
+     /* ---------------------------------------------
+      *  10.削除ボタンの作成
+      * --------------------------------------------- */
+      // 1. ボタン要素を作成
+      const DeleteButton = document.createElement("button");
+      // 2. ラベルを設定
+      DeleteButton.textContent = "削除";
+      // 3. クラスを設定
+      DeleteButton.classList.add("ButtonInfo", "RedButton");
+
+     /* ---------------------------------------------
+      *  11.削除ボタンのクリックイベント
+      * --------------------------------------------- */
+      DeleteButton.onclick = () => {
+        // 1. 投稿内容削除処理の呼び出し
+        DeletePostInfo(Index);
+      }
+
+     /* ---------------------------------------------
+      *  12.学習内容出力ボタンの作成
+      * --------------------------------------------- */
+      // 1. ボタン要素を作成
+      const PostOutputButton = document.createElement("button");
+      // 2. ラベルを設定
+      PostOutputButton.textContent = "学習内容出力";
+      // 3. クラスを設定
+      PostOutputButton.classList.add("ButtonInfo", "BlueButton");
+      
+     /* ---------------------------------------------
+      *  13.学習内容出力ボタンのクリックイベント
+      * --------------------------------------------- */
+      PostOutputButton.onclick = () =>{
+        // 1. 学習内容出力処理の呼び出し
+        OutputPostInfo(Index);
+      }
+
+     /* ---------------------------------------------
+      *  14.ボタンラッパー作成
+      * --------------------------------------------- */
+      // 1. グループ要素作成
+      const ButtonWrapper = document.createElement("div");
+      // 2. クラス設定
+      ButtonWrapper.className = "PostButtonWrapper";
+
+     /* ---------------------------------------------
+      *  15.DOM組み立て
+      * --------------------------------------------- */
+      // 1. ボタンラッパーにコピーボタンを格納
+      ButtonWrapper.appendChild(CopyButton);
+      // 2. ボタンラッパーに編集ボタンを格納
+      ButtonWrapper.appendChild(EditButton);
+      // 3. ボタンラッパーに削除ボタンを格納
+      ButtonWrapper.appendChild(DeleteButton);
+      // 4. ボタンラッパーに出力ボタンを格納
+      ButtonWrapper.appendChild(PostOutputButton);
+      // 5. 投稿内容ラッパーにボタンラッパーを格納
+      PostListWrapper.appendChild(ButtonWrapper);
+      // 6. 投稿リストに投稿内容ラッパーを格納
+      PostListElement.appendChild(PostListWrapper);
     });
 
-    /* ヘッダーカラーの設定 --2025/09/08 */
-    // 1.ヘッダー要素を取得
-    const header = document.querySelector("header");
-    // 2.ストレージから背景色取得
-    const savedColorClass = localStorage.getItem("selectedHeaderColor");
-    // 3.背景色を設定
-    if (header && savedColorClass) {
-      header.classList.add(savedColorClass);
-      /* タイトルエリアの背景色も設定 */
-      const titleAreas = document.querySelectorAll(".titleArea");
+   /* ==========================================================
+    * タイトルエリア背景色の設定
+    * ========================================================== */
+    if (SavedColorClass) {
+     /* ---------------------------------------------
+      *  1. 事前定義
+      * --------------------------------------------- */
+      // 1. タイトルエリアの要素取得
+      const TitleAreas = document.querySelectorAll(".PostTitleWrapper");
 
-      /* 存在する場合は設定 */
-      titleAreas.forEach((element) => {
-        element.classList.add(savedColorClass);
+     /* ---------------------------------------------
+      *  2. タイトルエリアのクラス除去
+      * --------------------------------------------- */
+      Array.from(TitleAreas).forEach((Element) => {
+        Array.from(Element.classList).forEach((Class)=>{
+          // 1. タイトルエリア要素からクラスを順次除去
+          Element.classList.remove(Class);
+        })
       });
+
+     /* ---------------------------------------------
+      *  3. タイトルエリアのクラス設定
+      * --------------------------------------------- */
+      TitleAreas.forEach((Element)=>{
+        // 1. ラッパークラスとストレージに保管された背景色クラスを設定
+        Element.classList.add("PostTitleWrapper",SavedColorClass)
+      })
     }
 
-    /* 画面のスクロール --2025/09/08 */
-    const postListEl = document.getElementById("postList");
-    if (postListEl) {
-      postListEl.scrollTop = postListEl.scrollHeight;
+   /* ==========================================================
+    * 画面スクロール位置を設定
+    * ========================================================== */
+    if (PostListElement) {
+      // 1. スクロール位置を最下部に設定
+      PostListElement.scrollTop = PostListElement.scrollHeight;
     }
-  } else {
-    // 21.投稿がない場合はメッセージを表示
-    const noPostsMessage = document.createElement("p");
-    noPostsMessage.textContent = "投稿がありません。";
-    postList.appendChild(noPostsMessage);
+  }
+ /* ==========================================================
+  * 投稿内容が存在しない場合
+  * ========================================================== */
+  else {
+   /* ---------------------------------------------
+    *  1. 投稿内容のラッパー要素作成
+    * --------------------------------------------- */
+    // 1. グループ要素を作成
+    const PostListWrapper = document.createElement("div");
+    // 2. クラスを設定
+    PostListWrapper.className = "PostListWrapper";
+
+   /* ---------------------------------------------
+    *  2. 表示メッセージ要素作成
+    * --------------------------------------------- */
+    // 1. テキスト要素を作成
+    const NotPostsMessage = document.createElement("p");
+    // 2. ラベル設定
+    NotPostsMessage.textContent = GetMessageInfo("error", "008");
+
+   /* ---------------------------------------------
+    *  3. DOMの組み立て
+    * --------------------------------------------- */
+    // 1. 投稿内容のラッパーに表示メッセージを格納
+    PostListWrapper.appendChild(NotPostsMessage)
+    // 2. 投稿内容リストにメッセージを格納
+    PostListElement.appendChild(PostListWrapper);
   }
 }
 
@@ -242,35 +360,57 @@ function displayPosts() {
  * モーダルを閉じる処理
  */
 function ModalCloseEvent() {
-  document.getElementById("imageModal").style.display = "none";
+  // 1. 画面から非表示に設定
+  document.getElementById("ImgDialog").style.display = "none";
 }
 
 /**
  * 検索フォームのロストフォーカス時イベント
  */
 function SearchEvent() {
-  /* 事前定義 */
-  // 1.検索フォームの要素を取得
-  const searchForm = document.getElementById("SearchWordForm");
-  // 2.検索ワードを取得
-  const searchWord = searchForm.value.trim();
-  // 3.投稿内容要素取得
-  const postEntries = document.querySelectorAll(".Entry");
+ /* ==========================================================
+  * 事前定義
+  * ========================================================== */
+  // 1. 検索フォームの要素を取得
+  const SearchFormElement = document.getElementById("SearchWordForm");
+  // 2. 検索ワードを取得
+  const SearchWord = SearchFormElement.value.trim();
+  // 3. 投稿内容ラッパー要素取得
+  const PostListWrapper = document.querySelectorAll(".PostListWrapper");
 
-  if (searchWord) {
-    /* 投稿内容のフィルタリング */
-    postEntries.forEach((entry) => {
-      // 1.タイトル要素を取得
-      const title = entry.querySelector(".titleText").textContent;
-      // 2.タイトルに検索ワードが含まれる場合は表示、含まれない場合は非表示
-      if (title.includes(searchWord)) {
-        entry.style.display = "block";
+ /* ==========================================================
+  * 投稿内容のフィルタリング
+  * ========================================================== */
+  if (SearchWord) {
+    PostListWrapper.forEach((Post) => {
+     /* ---------------------------------------------
+      *  1. 事前定義
+      * --------------------------------------------- */
+      // 1. 投稿タイトルを取得
+      const PostTitleElement = Post.querySelector(".PostTitle").textContent;
+
+     /* ---------------------------------------------
+      *  2. 投稿タイトルに検索ワードが含まれる場合
+      * --------------------------------------------- */
+      if (PostTitleElement.includes(SearchWord)) {
+        // 1. 画面に表示
+        Post.style.display = "block";
+
+     /* ---------------------------------------------
+      *  3. タイトルに検索ワードが含まれない場合
+      * --------------------------------------------- */
       } else {
-        entry.style.display = "none";
+        // 1. 画面から非表示
+        Post.style.display = "none";
       }
     });
+
+ /* ==========================================================
+  * 検索ワード未入力時
+  * ========================================================== */
   } else {
-    displayPosts();
+    // 1. 投稿内容再表示
+    DisplayPostList();
   }
 }
 
@@ -278,42 +418,116 @@ function SearchEvent() {
  * 検索フォームのクリア処理
  */
 function ClearSearch() {
-  /* 事前定義 */
-  // 1.検索フォームの要素を取得
+  // 1. 検索フォームの要素を取得
   const searchForm = document.getElementById("SearchWordForm");
-  // 2.検索フォームをクリア
+  // 2. 検索フォームをクリア
   searchForm.value = "";
-  // 3.投稿の再表示
-  displayPosts();
+  // 3. 投稿の再表示
+  DisplayPostList();
 }
 
 /**
  * 画像選択時イベント
  */
 document.getElementById("imageInput").addEventListener("change", (event) => {
-  /* 事前定義 */
-  // 1.画像名を保持する要素を取得
+ /* ---------------------------------------------
+  *  1. 事前定義
+  * --------------------------------------------- */
+  // 1. 画像名要素取得
   const FileName = document.getElementById("SelectFileNameForm");
-  // 2.選択されたファイルを取得
+  FileName.value = "";
+  // 2.　選択されたファイルを取得
   const SelectImage = event.target.files[0];
 
-  /* 選択されたファイル名の設定 */
+ /* ---------------------------------------------
+  *  2. ファイルが存在する場合
+  * --------------------------------------------- */
   if (SelectImage) {
+    // 1. ファイル名を設定
     FileName.value = SelectImage.name;
+
+ /* ---------------------------------------------
+  *  3. ファイルが存在しない場合
+  * --------------------------------------------- */
   } else {
-    FileName.value = "ファイルが選択されていません";
+    // 1. ファイル未選択のメッセージを表示
+    FileName.value = GetMessageInfo("error", "007", "ファイル");
   }
 });
 
 /**
+ * マークダウンやURLの変換処理
+ * @param {*} FormattText 整形を行う投稿内容の文字列 
+ * @returns 入力内容を埋め込んだDOM文字列
+ */
+function convertMarkdown(FormattText) {
+ /* ==========================================================
+  * 事前定義
+  * ========================================================== */
+ /* ---------------------------------------------
+  *  1. 入力バリデーションチェック
+  * --------------------------------------------- */
+  if (!FormattText) {
+    return "";
+  }
+
+ /* ==========================================================
+  * マークダウン変換
+  * ========================================================== */
+ /* ---------------------------------------------
+  *  1. [```]でコードブロックの作成
+  * --------------------------------------------- */
+  FormattText = FormattText.replace(/```([\s\S]*?)```/g, (_, code) => {
+    return `<pre class="CodeBlock"><code>${escapeHtml(code)}</code></pre>`;
+  });
+
+ /* ---------------------------------------------
+  *  2. [**]で見出し(大)の作成
+  * --------------------------------------------- */
+  FormattText = FormattText.replace(/\*\*(.+?)\*\*/g, '<h2 class="md-h2">$1</h2>');
+
+ /* ---------------------------------------------
+  *  3. [*]で見出し(小)の作成
+  * --------------------------------------------- */
+  FormattText = FormattText.replace(/\*(.+?)\*/g, '<h3 class="md-h3">$1</h3>');
+
+ /* ---------------------------------------------
+  *  4. URL を自動リンク化
+  * --------------------------------------------- */
+  FormattText = FormattText.replace(
+    /(https?:\/\/[^\s]+)/g,
+    '<a href="$1" class="md-link" target="_blank" rel="noopener noreferrer">$1</a>'
+  );
+
+ /* ==========================================================
+  * 処理終了時
+  * ========================================================== */
+  // 1. 戻り値を返す
+  return FormattText;
+}
+
+/**
+ * HTMLエスケープ処理
+ * @param {string} EscapeString 特殊文字
+ * @returns エスケープされた文字列
+ */
+function escapeHtml(EscapeString) {
+  // 1. 特殊文字をエスケープして返す
+  return EscapeString
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;");
+}
+
+/**
  * 投稿処理
- * @returns
+ * @returns 
  */
 function addPost() {
   // 1.タイトル取得
   const title = document.getElementById("titleInput").value.trim();
   // 2.本文取得
-  const body = document.getElementById("bodyInput").value.trim();
+  const rawBody = document.getElementById("bodyInput").value.trim();
   // 3.画像ファイル取得
   const file = document.getElementById("imageInput").files[0];
   // 4.画像名を保持する要素を取得
@@ -321,85 +535,68 @@ function addPost() {
 
   /* タイトルが空の場合は処理を終了 */
   if (!title) {
-    // 1.ダイアログ表示
-    dialog.ShowDialog("タイトルを入力してください。");
-    // 2.処理終了
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "006", "タイトル"));
     return;
   }
 
   /* 本文が空の場合は処理を終了 */
-  if (!body) {
-    // 1.ダイアログ表示
-    dialog.ShowDialog("本文を入力してください。");
-    // 2.処理終了
+  if (!rawBody) {
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "006", "本文"));
     return;
   }
 
-  /* 重複した投稿の存在をチェック | 更新年月日 : 2025/09/10 | 更新者 : 恵島 */
-  const isDuplicate = savedPosts.some((post, index) => {
-    // 1.編集中の投稿はスキップ
-    if (editingIndex !== null && editingIndex === index) {
-      return false;
+  /* 重複チェック */
+  const isDuplicate = SavePostArray.some((post, Index) => {
+    if (EditIndex !== null && EditIndex === Index){
+       return false;
     }
-    // 2.「間違えた問題」は重複チェック対象外(複数回投稿したいため)
-    if (post.key === "間違えた問題") {
-      return false;
-    }
-    // 3.タイトルが一致する投稿が存在するかチェック
-    return post.title === title && post.key === currentKey;
+    return post.title === title && post.key === CurrentKey;
   });
 
-  /* 重複が存在する場合は処理を終了 */
   if (isDuplicate) {
-    // 1.ダイアログ表示
-    dialog.ShowDialog(
-      "重複した内容の投稿が存在します。タイトルを変更してください。"
-    );
-    // 2.処理終了
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "003"));
     return;
   }
 
   /* 投稿処理 */
   const finalize = (imageData) => {
-    // 1.新しい投稿のデータを作成
     const newPost = {
       title,
-      body,
+      body : rawBody,
       image: imageData,
-      key: currentKey || null,
+      key: CurrentKey || null,
       imagename: fileName || null,
     };
 
-    // 2.編集中の投稿がある場合は更新、なければ新規追加
-    if (editingIndex !== null) {
-      savedPosts[editingIndex] = newPost;
-      editingIndex = null;
+    if (EditIndex !== null) {
+      SavePostArray[EditIndex] = newPost;
+      EditIndex = null;
     } else {
-      savedPosts.push(newPost);
+      SavePostArray.push(newPost);
     }
-    // 3.投稿内容を保存
-    savePosts();
-    // 4.投稿リストを再表示
-    displayPosts();
-    // 5.入力フィールドをクリア
+
+    SavePostList();
+    DisplayPostList();
+
+    // 入力クリア
     document.getElementById("titleInput").value = "";
     document.getElementById("bodyInput").value = "";
     document.getElementById("imageInput").value = "";
     document.getElementById("SearchWordForm").value = "";
     document.getElementById("SelectFileNameForm").value = "";
   };
-  // 5.画像ファイルが選択されている場合はFileReaderで読み込み
+
   if (file) {
     const reader = new FileReader();
     reader.onload = () => finalize(reader.result);
     reader.readAsDataURL(file);
   } else {
-    // 6.画像が選択されていない場合は既存の画像を使用
     const existingImage =
-      editingIndex !== null ? savedPosts[editingIndex].image : null;
+      EditIndex !== null ? SavePostArray[EditIndex].image : null;
     finalize(existingImage);
   }
 }
+
 /**
  * 学習内容の出力処理
  * CSVファイルを出力する(PDFはさすがにできなさそう)
@@ -412,14 +609,14 @@ function PreateLearningInfo() {
   const SectionName = sessionStorage.getItem("SectionInfo");
   // 3.学習内容のヘッダーを保持する
   const LearningHeader = `${document
-    .getElementById("headerText")
+    .getElementById("HeaderText")
     .textContent.trim()}`;
 
   /* 投稿内容の取得処理 */
-  if (0 < savedPosts.length) {
-    savedPosts.forEach((post) => {
+  if (0 < SavePostArray.length) {
+    SavePostArray.forEach((post) => {
       /* 投稿のキーが現在のキーと一致しない場合はスキップ */
-      if (post.key && post.key !== currentKey) {
+      if (post.key && post.key !== CurrentKey) {
         return;
       }
       /* 投稿内容のタイトルと本文を取得 */
@@ -434,13 +631,13 @@ function PreateLearningInfo() {
     });
   }
   /* 出力用にデータを整形 */
-  const PrintData = CsvInfo.map((item, index) => {
-    return `【${index + 1}】${item.title}\n\n${item.body}\n${createLine()}\n`;
+  const PrintData = CsvInfo.map((item, Index) => {
+    return `【${Index + 1}】${item.title}\n\n${item.body}\n${CreateLine()}\n`;
   }).join("\n");
 
   /* printDataの先頭にヘッダーを追加 */
   const csvData =
-    `\n【${SectionName} : ${LearningHeader}】\n${createLine()}\n\n` + PrintData;
+    `\n【${SectionName} : ${LearningHeader}】\n${CreateLine()}\n\n` + PrintData;
 
   /* ダウンロード処理 */
   // 1.バイナリデータの作成
@@ -462,7 +659,7 @@ function PreateLearningInfo() {
 /**
  * 指定の投稿の出力
  */
-function ContentCreateLearningInfo(index) {
+function OutputPostInfo(Index) {
   /* 事前定義 */
   // 1.出力内容を保持する配列
   const CsvInfo = [];
@@ -470,13 +667,13 @@ function ContentCreateLearningInfo(index) {
   const SectionName = sessionStorage.getItem("SectionInfo");
   // 3.学習内容のヘッダーを保持する
   const LearningHeader = `${document
-    .getElementById("headerText")
+    .getElementById("HeaderText")
     .textContent.trim()}`;
   // 4.指定の投稿を取得
-  const post = savedPosts[index];
+  const post = SavePostArray[Index];
 
   /* 投稿内容の取得処理 */
-  if (post.key && post.key !== currentKey) {
+  if (post.key && post.key !== CurrentKey) {
     return;
   }
   /* 投稿内容のタイトルと本文を取得 */
@@ -489,12 +686,12 @@ function ContentCreateLearningInfo(index) {
   /* 出力内容を保持する配列にセット */
   CsvInfo.push(CsvInfoItems);
   /* 出力用にデータを整形 */
-  const PrintData = CsvInfo.map((item, index) => {
-    return `【${index + 1}】${item.title}\n\n${item.body}\n${createLine()}\n`;
+  const PrintData = CsvInfo.map((item, Index) => {
+    return `【${Index + 1}】${item.title}\n\n${item.body}\n${CreateLine()}\n`;
   }).join("\n");
   /* printDataの先頭にヘッダーを追加 */
   const csvData =
-    `\n【${SectionName} : ${LearningHeader}】\n${createLine()}\n\n` + PrintData;
+    `\n【${SectionName} : ${LearningHeader}】\n${CreateLine()}\n\n` + PrintData;
   /* ダウンロード処理 */
   // 1.バイナリデータの作成
   const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
@@ -510,6 +707,170 @@ function ContentCreateLearningInfo(index) {
   a.click();
   // 7.URLの削除(ネット上のコピペのため不明点は調べる)
   URL.revokeObjectURL(url);
+}
+
+/**
+ * 入力欄の拡大処理
+ * 作成年月日 : 2025/11/06
+ */
+function CreateTextArea() {
+  /* ==========================================================
+   * 定義
+   * ========================================================== */
+  // 1.入力フォーム内のテキストを取得
+  const FormTextValue = document.getElementById("bodyInput").value;
+
+  /* ==========================================================
+   * ダイアログ本体の作成
+   * ========================================================== */
+  // 1.グループ要素作成
+  const dialogContainer = document.createElement("div");
+  // 2.クラス設定
+  dialogContainer.classList.add("DialogContainer", "w-1000", "max-w-1000");
+
+  /* ==========================================================
+   * 背景クリックの無効化
+   * ========================================================== */
+  // 1.クラス設定
+  document.body.classList.add("DialogActive");
+
+  /* ==========================================================
+   * テキストエリアの作成
+   * ========================================================== */
+  // 1.テキストエリア要素を作成
+  const textArea = document.createElement("textarea");
+  // 2.プレースホルダーの作成
+  textArea.placeholder = "詳細・・・";
+  // 3.クラス設定
+  textArea.classList.add("TextAreaFormForDialog", "w-full", "h-500");
+  // 4.ID設定
+  textArea.id = "SummaryTextArea";
+  // 5.値の設定
+  textArea.value = FormTextValue;
+
+  /* ==========================================================
+   * ボタンコンテナの作成
+   * ========================================================== */
+  // 1.グループ要素作成
+  const ButtonContainer = document.createElement("div");
+  // 2.クラスの設定
+  ButtonContainer.className = "SummaryDialogButtonForm";
+
+  /* ==========================================================
+   * 閉じるボタンの作成
+   * ========================================================== */
+  // 1.ボタン要素作成
+  const closeButton = document.createElement("button");
+  // 2.ラベル設定
+  closeButton.innerHTML = "閉じる";
+  // 3.クラス設定
+  closeButton.classList.add("ButtonInfo", "RedButton");
+
+  /* ==========================================================
+   * クリアボタンの作成
+   * ========================================================== */
+  // 1.ボタン要素作成
+  const clearButton = document.createElement("button");
+  // 2.ラベル設定
+  clearButton.innerHTML = "クリア";
+  // 3.クラス設定
+  clearButton.classList.add("ButtonInfo", "YellowButton");
+
+  /* ==========================================================
+   * 決定ボタンの作成
+   * ========================================================== */
+  // 1.ボタン要素作成
+  const resultButton = document.createElement("button");
+  // 2.ラベル設定
+  resultButton.innerHTML = "決定";
+  // 3.クラス設定
+  resultButton.classList.add("ButtonInfo", "BlueButton");
+
+  /* ==========================================================
+   * 各要素の格納
+   * ========================================================== */
+  // 1. テキストエリアをダイアログ本体に格納
+  dialogContainer.appendChild(textArea);
+  // 2. 各ボタンをボタンコンテナに格納
+  ButtonContainer.append(closeButton, clearButton, resultButton);
+  // 3. ボタンコンテナをダイアログ本体に格納
+  dialogContainer.appendChild(ButtonContainer);
+  // 4. ダイアログ本体をボディに格納
+  document.body.appendChild(dialogContainer);
+
+  /* ==========================================================
+   * 初期フォーカスを設定
+   * ========================================================== */
+  // 1. テキストエリアにフォーカスを設定
+  textArea.focus();
+
+  /* ==========================================================
+   * 閉じるボタンの処理関数を作成
+   * ========================================================== */
+  const closeDialog = () => {
+    // 1.ダイアログ本体をボディから取り除く
+    if (document.body.contains(dialogContainer)) {
+      document.body.removeChild(dialogContainer);
+    }
+    // 2.背景クリック無効化のクラスをボディから取り除く
+    document.body.classList.remove("DialogActive");
+    // 3.ESCキーの押下時のイベントリスナーを取り除く
+    document.removeEventListener("keydown", escHandler);
+  };
+
+  /* ==========================================================
+   * ESCキーの押下時のイベント定義
+   * ========================================================== */
+  const escHandler = (e) => {
+    // 1.押下されたキーがESCキーであれば閉じるボタンの処理を呼び出す
+    if (e.key === "Escape") {
+      closeDialog();
+    }
+  };
+
+  /* ==========================================================
+   * ESCキーをイベントリスナーに登録
+   * ========================================================== */
+  // 1.ESCキーをイベントリスナーに登録する
+  document.addEventListener("keydown", escHandler);
+
+  /* ==========================================================
+   * 閉じるボタンの押下時のイベント定義
+   * ========================================================== */
+  closeButton.onclick = () => {
+    // 1.閉じるボタンの処理関数を呼び出す
+    closeDialog();
+  };
+
+  /* ==========================================================
+   * クリアボタンの押下時のイベント定義
+   * ========================================================== */
+  clearButton.onclick = () => {
+    // 1.テキストエリアの入力値を初期化する
+    textArea.value = "";
+    // 2.フォーカスをテキストエリアに設定する
+    textArea.focus();
+  };
+
+  /* ==========================================================
+   * 決定ボタンの押下時のイベント定義
+   * ========================================================== */
+  resultButton.onclick = () => {
+    /* 定義 */
+    // 1.テキストエリアの入力値を取得する
+    const result = textArea.value.trim();
+    // 2.元の入力欄の要素取得
+    const FormText = document.getElementById("bodyInput");
+
+    /* 値の反映を行う要素の取得が行えた場合 */
+    if (FormText) {
+      // 1.テキストエリアの入力値を反映させる
+      FormText.value = result;
+    }
+
+    /* 閉じるボタンの処理を呼び出す */
+    closeDialog(result);
+  };
 }
 
 /**
@@ -529,8 +890,8 @@ function backPage() {
   /* 入力途中の要素が存在する場合 */
   if (titleInput || bodyInput || imageInput || imageName) {
     // 1.ダイアログを表示
-    dialog
-      .ShowConfirmDialog("入力中の内容が失われますが、戻りますか？")
+    DialogIncetance
+      .ShowConfirmDialog(GetMessageInfo("confirm", "001"))
       .then((result) => {
         /* [はい]が押下された場合は画面を戻る */
         if (result) {
@@ -562,8 +923,8 @@ function clearEvent() {
   /* 入力途中の要素が存在する場合 */
   if (titleInput || bodyInput || imageInput || imageName) {
     // 1.ダイアログを表示
-    dialog
-      .ShowConfirmDialog("入力中の内容が失われますが、戻りますか？")
+    DialogIncetance
+      .ShowConfirmDialog(GetMessageInfo("confirm", "001"))
       .then((result) => {
         /* [はい]が押下された場合は画面を戻る */
         if (result) {
@@ -576,7 +937,7 @@ function clearEvent() {
           // 4.画像名クリア
           document.getElementById("SelectFileNameForm").value = "";
           // 5.編集中のインデックスをリセット
-          editingIndex = null;
+          EditIndex = null;
         } else {
           /* [いいえ]が押下された場合は処理終了 */
           return;
@@ -593,19 +954,19 @@ function clearEvent() {
     // 4.画像名クリア
     document.getElementById("SelectFileNameForm").value = "";
     // 5.編集中のインデックスをリセット
-    editingIndex = null;
+    EditIndex = null;
   }
 }
 
 /**
  * テキストのコピーイベント
  */
-function PostCopy(bodyElement, index) {
+function PostCopy(bodyElement, Index) {
   /* 定義 */
   // 1.コピー内容の取得
   const textToCopy = bodyElement.textContent;
   // 2.ボタン要素の取得(ラベル変更用)
-  const CopyButtonEl = document.getElementById(`copyBtn-${index}`);
+  const CopyButtonEl = document.getElementById(`CopyButton-${Index}`);
   // 3.コピーボタンに表示されているラベル
   const CopyButtonLabel = CopyButtonEl.textContent.trim();
 
@@ -636,41 +997,39 @@ function PostCopy(bodyElement, index) {
 
 /**
  * 修正ボタン押下時の処理
- * @param {*} index 選択中の投稿インデックス
+ * @param {*} Index 選択中の投稿インデックス
  */
-function editPost(index) {
-  const post = savedPosts[index];
+function EditPostInfo(Index) {
+  const post = SavePostArray[Index];
   document.getElementById("titleInput").value = post.title;
   document.getElementById("bodyInput").value = post.body;
   document.getElementById("SelectFileNameForm").value = post.imagename || "";
-  editingIndex = index;
+  EditIndex = Index;
   window.scrollTo(0, document.body.scrollHeight);
 }
 
 /**
  * 削除ボタン押下時の処理
- * @param {*} index 選択中の投稿インデックス
+ * @param {*} Index 選択中の投稿インデックス
  */
-function deletePost(index) {
+function DeletePostInfo(Index) {
   /* 修正中の項目が存在する場合は削除を行わせない | 更新年月日 : 2025/09/09 | 更新者 : 恵島 */
-  if (editingIndex !== null) {
-    dialog.ShowDialog(
-      "編集中の項目が存在します。編集を完了してから削除を行ってください。"
-    );
+  if (EditIndex !== null) {
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "004"));
     return;
   }
 
   /* 削除処理 */
   // 1.ダイアログを表示
-  dialog.ShowConfirmDialog("本当に削除しますか？").then((result) => {
+  DialogIncetance.ShowConfirmDialog(GetMessageInfo("confirm", "003")).then((result) => {
     /* [はい]が押下された場合は画面を戻る */
     if (result) {
       // 1.対象インデックスの要素を切り取り
-      savedPosts.splice(index, 1);
+      SavePostArray.splice(Index, 1);
       // 2.投稿内容を保存
-      savePosts();
+      SavePostList();
       // 3.画面の読み込み
-      displayPosts();
+      DisplayPostList();
       // 4.検索フォームをクリア
       document.getElementById("SearchWordForm").value = "";
     } else {
@@ -729,13 +1088,70 @@ function CreatYear() {
 /**
  * 直線を返す処理　--2025/08/20 コードが汚くなりすぎたので作成
  */
-function createLine() {
+function CreateLine(LineNumber = 150) {
   // 1.直線を保持する
   let Line = "";
   // 2.とりあえず150文字の直線を作成
-  for (let index = 0; index < 150; index++) {
+  for (let Index = 0; Index < LineNumber; Index++) {
     Line += "_";
   }
   // 3.返す
   return Line;
+}
+
+/**
+ * 学習内容の削除処理
+ * sectionNameとcurrentKeyに紐づくデータをlocalStorageから削除する
+ * 作成年月日 : 2025/11/04
+ */
+function DeleteLearningInfo() {
+  /* 事前定義 */
+  // 1.ストレージ内の投稿を取得
+  const SavePostArray = JSON.parse(localStorage.getItem("savedPosts")) || [];
+
+  /* バリデーションチェック */
+  // 1.currentKeyが存在しない場合
+  if (!CurrentKey) {
+    // 1.ダイアログ表示
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "005"));
+    // 2.処理終了
+    return;
+  }
+  // 2.投稿が存在しない場合
+  if (SavePostArray.length === 0) {
+    // 1.ダイアログ表示
+    DialogIncetance.ShowDialog(GetMessageInfo("error", "002"));
+    // 2.処理終了
+    return;
+  }
+
+  /* コンファーム表示 */
+  DialogIncetance
+    .ShowConfirmDialog(GetMessageInfo("confirm", "002", "ページ内の全ての投稿"))
+    .then((result) => {
+      /* [はい]が押下された場合 */
+      if (result) {
+        /* 削除対象の抽出処理 */
+        const filterePost = SavePostArray.filter((post) => {
+          // 1.post.keyまたはpost.sectionNameが存在しない場合は残す
+          if (!post.key) {
+            return true;
+          }
+          // 2.一致した場合は削除対象(false)を返す
+          return !(CurrentKey === post.key);
+        });
+
+        /* 保持しているデータをクリア */
+        localStorage.removeItem("savedPosts");
+
+        /* localStorageへ再保存 */
+        localStorage.setItem("savedPosts", JSON.stringify(filterePost));
+
+        /* ダイアログ表示 */
+        window.location.reload();
+      } else {
+        /* [いいえ]が押下された場合 */
+        return;
+      }
+    });
 }

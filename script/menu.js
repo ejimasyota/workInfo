@@ -5,11 +5,10 @@
  **********************************************************************************/
 const menuList = [
   { section: "自己学習", key: "調べたこと", icon: "" },
-  { section: "自己学習", key: "様々な攻撃", icon: "" },
-  { section: "自己学習", key: "様々なテスト", icon: "" },
   { section: "自己学習", key: "アクセス修飾子一覧", icon: "" },
   { section: "自己学習", key: "Web通信について", icon: "" },
   { section: "自己学習", key: "ネットワークの基礎", icon: "" },
+  { section: "自己学習", key: "サーバについて", icon: "" },
   { section: "業務活用", key: "議事録", icon: "" },
   { section: "業務活用", key: "業務内のメモ", icon: "" },
   { section: "業務活用", key: "電話対応のメモ", icon: "" },
@@ -39,8 +38,16 @@ const menuList = [
   { section: "基本情報", key: "企業活動", icon: "" },
   { section: "基本情報", key: "法務", icon: "" },
   { section: "基本情報", key: "間違えた問題", icon: "" },
+  { section: "基本情報", key: "間違えた問題(計算)", icon: "" },
   { section: "基本情報", key: "まとめて覚えたい内容", icon: "" },
+  { section: "基本情報", key: "間違えそうな問題の重点対策", icon: "" },
   { section: "基本情報", key: "計算公式", icon: "" },
+  { section: "言語学習", key: "PHP", icon: "" },
+  { section: "言語学習", key: "SQL", icon: "" },
+  { section: "言語学習", key: "JavaScript", icon: "" },
+  { section: "OS", key: "Linux", icon: "" },
+  { section: "エディター", key: "Vim", icon: "Vim.png" },
+  { section: "個人用", key: "参考サイト", icon: "" },
 ];
 
 // 2.セクションリスト(これも上記と同様。いずれlocalStrageに保持するように変更して、カプセル化を行う)
@@ -48,7 +55,10 @@ const sectionList = [
   { section: "業務活用", icon: "" },
   { section: "自己学習", icon: "" },
   { section: "基本情報", icon: "" },
-  { section: "個人的", icon: "" },
+  { section: "言語学習", icon: "" },
+  { section: "OS", icon: "" },
+  { section: "エディター", icon: "" },
+  { section: "個人用", icon: "" },
 ];
 
 // 3.ダイアログのインスタンスを作成
@@ -56,19 +66,30 @@ const dialog = new DialogInfo();
 
 /* 画面ロード時処理 */
 document.addEventListener("DOMContentLoaded", function () {
-  /* ヘッダーカラーの設定 */
+  /* ------------------------------
+   * ヘッダーカラーの設定
+   * 作成日 : 2025/09/08
+   * 更新日 : 2025/12/22
+   * ------------------------------*/
+  /* 1. 事前定義 */
   // 1.ヘッダー要素を取得
-  const header = document.querySelector("header");
+  const HeaderColor = document.querySelector(".HeaderInfo");
   // 2.ストレージから背景色取得
-  const savedColorClass = localStorage.getItem("selectedHeaderColor");
-  // 3.背景色を設定
-  if (header && savedColorClass) {
-    header.classList.add(savedColorClass);
+  const SavedColorClass = localStorage.getItem("selectedHeaderColor");
+    
+  /* 2. ヘッダーと背景色が存在する場合 */
+  if (HeaderColor && SavedColorClass) {
+    // 1. ヘッダーのクラスをすべて除去
+    Array.from(HeaderColor.classList).forEach((Class)=>{
+      HeaderColor.classList.remove(Class)
+    });
+    // 2. ヘッダーの基底クラスとストレージに保管された背景色クラスを設定
+    HeaderColor.classList.add("HeaderInfo", SavedColorClass);
   }
 
   /* 事前定義 */
   // 1.セクションの要素を取得
-  const Section = document.getElementById("sectionContainer");
+  const Section = document.getElementById("SectionContainer");
   // 2.メニューリストの要素を取得
   const container = document.getElementById("menuContainer");
 
@@ -124,9 +145,9 @@ document.addEventListener("DOMContentLoaded", function () {
           // 1.画像要素作成
           const img = document.createElement("img");
           // 2.画像のパスを設定
-          img.src = `../asetts/icon/${menuItem.icon}`;
+          img.src = `../asetts/img/icon/${menuItem.icon}`;
           // 3.画像のクラスを設定
-          img.className = "icon";
+          img.className = "IconImg";
           // 4.ボタンに画像を追加
           menuButton.appendChild(img);
         }
@@ -172,20 +193,16 @@ document.addEventListener("DOMContentLoaded", function () {
  */
 function ReadBackUp() {
   // 1.ダイアログを表示
-  dialog
-    .ShowConfirmDialog(
-      "バックアップの復元を行いますか? ※事前バックアップの作成を推奨します。"
-    )
-    .then((result) => {
-      /* [はい]が押下された場合 */
-      if (result) {
-        // 1.ファイル要素のイベントを発火
-        document.getElementById("csvFile").click();
-      } else {
-        /* [いいえ]が押下された場合 */
-        return;
-      }
-    });
+  dialog.ShowConfirmDialog(GetMessageInfo("confirm", "004")).then((result) => {
+    /* [はい]が押下された場合 */
+    if (result) {
+      // 1.ファイル要素のイベントを発火
+      document.getElementById("csvFile").click();
+    } else {
+      /* [いいえ]が押下された場合 */
+      return;
+    }
+  });
 }
 
 /**
@@ -201,7 +218,7 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
   /* バックアップファイルを選択していないか、読み取れなかった場合 */
   if (!BackUpFile) {
     // 1.アラート表示
-    dialog.ShowDialog("ファイルを認識できませんでした。再度実行してください。");
+    dialog.ShowDialog(GetMessageInfo("error", "001"));
     // 2.処理終了
     return;
   }
@@ -218,17 +235,21 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
     // 3.バックアップから取得した内容をストレージにセット
     localStorage.setItem("savedPosts", BuckUpInfo);
     // 4.処理終了
-    dialog.ShowDialog("バックアップの復元が完了しました。");
-    // 5.画面の再読み込み
-    location.reload();
+    dialog.ShowDialog(GetMessageInfo("info", "001"), () => {
+      // 5.画面の再読み込み
+      location.reload();
+    });
   };
 
   /* 例外発生時 */
   FileRead.onerror = (e) => {
     // 1.デバッグログ
     console.error(e);
-    // 2.アラート表示
-    dialog.ShowDialog("ファイルの読み込みに失敗しました。");
+    // 2.エラーダイアログ表示
+    dialog.ShowDialog(GetMessageInfo("error", "001"), () => {
+      // 3.画面の再読み込み
+      location.reload();
+    });
   };
 });
 
@@ -236,16 +257,17 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
  * バックアップ作成ボタン
  */
 function CreateFullBackUp() {
-  /* 事前定義 */
-  // 1.投稿された内容の取得
-  const BuckUpData = localStorage.getItem("savedPosts").toString();
-  /* バックアップするようなデータが存在しない場合 */
-  if (!BuckUpData) {
-    // 1.アラート表示
-    dialog.ShowDialog("バックアップデータが存在しません");
+  /* バリデーションチェック --2025/11/04 */
+  if (!localStorage.getItem("savedPosts")) {
+    // 1.ダイアログ表示 --同期処理に修正
+    dialog.ShowDialog(GetMessageInfo("error", "002"));
     // 2.処理終了
     return;
   }
+
+  /* 事前定義 */
+  // 1.投稿された内容の取得
+  const BuckUpData = localStorage.getItem("savedPosts").toString();
 
   /* ダウンロード処理 */
   // 1.バイナリデータの作成
@@ -292,4 +314,28 @@ function CreatYear() {
 function UserInfo() {
   // 1.ユーザー設定画面へ遷移
   window.location.href = "../pages/userInfo.html";
+}
+
+/**
+ * 全データ削除
+ */
+function AllDataDelete() {
+  // 1.ダイアログを表示
+  dialog
+    .ShowConfirmDialog(GetMessageInfo("confirm", "002", "全てのデータ"))
+    .then((result) => {
+      /* [はい]が押下された場合 */
+      if (result) {
+        // 1.データキーを指定して削除
+        localStorage.removeItem("savedPosts");
+        // 2.ダイアログ表示
+        dialog.ShowDialog(GetMessageInfo("info", "002"), () => {
+          // 3.画面の再読み込み
+          location.reload();
+        });
+      } else {
+        /* [いいえ]が押下された場合 */
+        return;
+      }
+    });
 }
