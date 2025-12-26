@@ -4,30 +4,31 @@
     <meta charset="UTF-8" />
     <title>メモサイト</title>
     <link rel="stylesheet" href="../asetts/style.css" />
+    <link rel="icon" href="../asetts/img/favicon/favicon.png" sizes="32x32" />
   </head>
   <body>
     <header class="HeaderInfo DefoultHeader">
       <h2 class="HeaderText">メニュー</h2>
       <ul class="ButtonWrapper">
         <li>
-          <button class="ButtonInfo BlueButton" onclick="CreateFullBackUp()">
+          <button class="ButtonInfo" onclick="CreateFullBackUp()">
             バックアップ作成
           </button>
         </li>
         <li>
           <input type="file" id="csvFile" accept=".csv" style="display: none" />
-          <button class="ButtonInfo PinkButton" onclick="ReadBackUp()">
+          <button class="ButtonInfo" onclick="ReadBackUp()">
             バックアップ復元
           </button>
         </li>
         <li>
           <input type="file" id="csvFile" accept=".csv" style="display: none" />
-          <button class="ButtonInfo RedButton" onclick="AllDataDelete()">
+          <button class="ButtonInfo" onclick="AllDataDelete()">
             データ削除
           </button>
         </li>
         <li>
-          <button class="ButtonInfo PoupuleButton" onclick="UserInfo()">
+          <button class="ButtonInfo" onclick="UserInfo()">
             ユーザー設定
           </button>
         </li>
@@ -35,11 +36,11 @@
     </header>
 
     <main>
-      <div class="sideBar">
+      <aside class="sideBar">
         <div id="SectionContainer" class="SectionContainer">
           <h3 class="SectionLabel">メニュー項目</h3>
         </div>
-      </div>
+      </aside>
       <div class="menuList">
         <div id="menuContainer" class="menuContainer"></div>
       </div>

@@ -237,7 +237,7 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
     // 4.処理終了
     dialog.ShowDialog(GetMessageInfo("info", "001"), () => {
       // 5.画面の再読み込み
-      location.reload();
+      window.location.reload(true);
     });
   };
 

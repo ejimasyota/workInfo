@@ -186,6 +186,12 @@
 .h-500 {
   height: 500px;
 }
+.h-full{
+  height: 100%;
+}
+.h-auto{
+  height: auto;
+}
 
 /* 最大高さ */
 .max-h-10 {
@@ -337,6 +343,9 @@
 }
 .max-h-500 {
   max-height: 500px;
+}
+.max-h-auto {
+  max-height: auto;
 }
 
 /* マージン */
@@ -593,6 +602,9 @@
 .w-full {
   width: 100%;
 }
+.w-auto {
+  width: auto;
+}
 
 /* 最大幅 */
 .max-w-100 {
@@ -655,6 +667,9 @@
 .max-w-full {
   max-width: 100%;
 }
+.max-w-auto {
+  max-width: auto;
+}
 
 /* 最小幅 */
 .min-w-100 {
@@ -716,4 +731,7 @@
 }
 .min-w-full {
   min-width: 100%;
+}
+.min-w-auto {
+  min-width: auto;
 }

@@ -15,6 +15,8 @@ const CurrentKey = UrlParam.get("key");
 const DialogIncetance = new DialogInfo();
 // 7. ストレージから背景色取得
 const SavedColorClass = localStorage.getItem("selectedHeaderColor");
+// 8. 画像プレビューダイアログインスタンス
+const ImgPreviewInfo = new ImagePreviewDialog();
 
 /* ==========================================================
  * 画面ロード時処理
@@ -27,9 +29,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const StrageSavePost = localStorage.getItem("savedPosts");
   // 2. データが存在する場合はJSON形式に変換して保存
   SavePostArray = StrageSavePost ? JSON.parse(StrageSavePost) : [];
-  // 3. データを選択されたメニュー項目の内容に絞り込み
-  SavePostArray = SavePostArray.filter((Post) => Post.key === CurrentKey)
-  // 4. 画面の表示処理
+  // 3. 画面の表示処理
   DisplayPostList();
 
  /* ---------------------------------------------
@@ -73,11 +73,13 @@ function DisplayPostList() {
   document.getElementById("HeaderText").textContent = CurrentKey;
   // 3. タブ名を選択値に変更
   document.querySelector("title").textContent = CurrentKey;
+  // 4. 選択されたメニュー項目の投稿件数を取得
+  const PostCount = SavePostArray.filter((Post) => Post.key === CurrentKey).length;
 
  /* ==========================================================
   * 投稿内容の表示処理
   * ========================================================== */
-  if (0 < SavePostArray.length) {
+  if (0 < PostCount) {
     SavePostArray.forEach((Post, Index) => {
      /* ---------------------------------------------
       *  1. 投稿のキーが現在のキーと一致しない場合
@@ -162,12 +164,14 @@ function DisplayPostList() {
         PostListWrapper.appendChild(ImgWrapper);
 
         /* 5. 画像クリック時イベント */
-        ImgElement.addEventListener("click", () => {
-          // 1. 画像ダイアログを表示
-          document.getElementById("ImgDialog").style.display = "block";
-          // 2. 画像ダイアログに画像を設定
-          document.getElementById("modalImg").src = ImgElement.src;
+        ImgElement.addEventListener("click", async() => {
+          /* 1. 画像パスが存在する場合 */
+          if (ImgElement && ImgElement.src) {
+            // 1. 画像プレビューダイアログ表示
+            await ImgPreviewInfo.ShowImagePreview(ImgElement.src);
+          }
         });
+              
 
         /* 6. 画像削除ボタンクリック時イベント */
         ImgDeleteButton.addEventListener("click", () => {
@@ -198,7 +202,7 @@ function DisplayPostList() {
       // 2. ラベルを設定
       CopyButton.textContent = "コピー";
       // 3. クラスを設定
-      CopyButton.classList.add("ButtonInfo", "PoupuleButton");
+      CopyButton.classList.add("ButtonInfo");
       // 4. IDを設定(querySelectorではほかに影響が出そうなので)
       CopyButton.id = `CopyButton-${Index}`;
 
@@ -218,7 +222,7 @@ function DisplayPostList() {
       // 2. ラベルを設定
       EditButton.textContent = "修正";
       // 3. クラスを設定
-      EditButton.classList.add("ButtonInfo", "BlueButton");
+      EditButton.classList.add("ButtonInfo");
 
      /* ---------------------------------------------
       *  9. 編集ボタンのクリックイベント
@@ -236,7 +240,7 @@ function DisplayPostList() {
       // 2. ラベルを設定
       DeleteButton.textContent = "削除";
       // 3. クラスを設定
-      DeleteButton.classList.add("ButtonInfo", "RedButton");
+      DeleteButton.classList.add("ButtonInfo");
 
      /* ---------------------------------------------
       *  11.削除ボタンのクリックイベント
@@ -254,7 +258,7 @@ function DisplayPostList() {
       // 2. ラベルを設定
       PostOutputButton.textContent = "学習内容出力";
       // 3. クラスを設定
-      PostOutputButton.classList.add("ButtonInfo", "BlueButton");
+      PostOutputButton.classList.add("ButtonInfo");
       
      /* ---------------------------------------------
       *  13.学習内容出力ボタンのクリックイベント
@@ -365,7 +369,7 @@ function ModalCloseEvent() {
 }
 
 /**
- * 検索フォームのロストフォーカス時イベント
+ * 検索フォームの入力時イベント
  */
 function SearchEvent() {
  /* ==========================================================
@@ -717,74 +721,83 @@ function CreateTextArea() {
   /* ==========================================================
    * 定義
    * ========================================================== */
-  // 1.入力フォーム内のテキストを取得
+  // 1. 入力フォーム内のテキストを取得
   const FormTextValue = document.getElementById("bodyInput").value;
 
   /* ==========================================================
    * ダイアログ本体の作成
    * ========================================================== */
-  // 1.グループ要素作成
+  // 1. グループ要素作成
   const dialogContainer = document.createElement("div");
-  // 2.クラス設定
-  dialogContainer.classList.add("DialogContainer", "w-1000", "max-w-1000");
+  // 2. クラス設定
+  dialogContainer.classList.add("MessageDialog", "w-1000", "max-w-1000");
 
   /* ==========================================================
    * 背景クリックの無効化
    * ========================================================== */
-  // 1.クラス設定
+  // 1. クラス設定
   document.body.classList.add("DialogActive");
 
   /* ==========================================================
    * テキストエリアの作成
    * ========================================================== */
-  // 1.テキストエリア要素を作成
+  // 1. テキストエリア要素を作成
   const textArea = document.createElement("textarea");
-  // 2.プレースホルダーの作成
+  // 2. プレースホルダーの作成
   textArea.placeholder = "詳細・・・";
-  // 3.クラス設定
-  textArea.classList.add("TextAreaFormForDialog", "w-full", "h-500");
-  // 4.ID設定
+  // 3. クラス設定
+  textArea.classList.add("TextAreaForm", "w-full", "h-500");
+  // 4. ID設定
   textArea.id = "SummaryTextArea";
-  // 5.値の設定
+  // 5. 値の設定
   textArea.value = FormTextValue;
 
   /* ==========================================================
    * ボタンコンテナの作成
    * ========================================================== */
-  // 1.グループ要素作成
+  // 1. グループ要素作成
   const ButtonContainer = document.createElement("div");
-  // 2.クラスの設定
+  // 2. クラスの設定
   ButtonContainer.className = "SummaryDialogButtonForm";
-
-  /* ==========================================================
-   * 閉じるボタンの作成
-   * ========================================================== */
-  // 1.ボタン要素作成
-  const closeButton = document.createElement("button");
-  // 2.ラベル設定
-  closeButton.innerHTML = "閉じる";
-  // 3.クラス設定
-  closeButton.classList.add("ButtonInfo", "RedButton");
-
-  /* ==========================================================
-   * クリアボタンの作成
-   * ========================================================== */
-  // 1.ボタン要素作成
-  const clearButton = document.createElement("button");
-  // 2.ラベル設定
-  clearButton.innerHTML = "クリア";
-  // 3.クラス設定
-  clearButton.classList.add("ButtonInfo", "YellowButton");
 
   /* ==========================================================
    * 決定ボタンの作成
    * ========================================================== */
-  // 1.ボタン要素作成
+  // 1. ボタン要素作成
   const resultButton = document.createElement("button");
-  // 2.ラベル設定
+  // 2. ラベル設定
   resultButton.innerHTML = "決定";
-  // 3.クラス設定
-  resultButton.classList.add("ButtonInfo", "BlueButton");
+  // 3. クラス設定
+  resultButton.classList.add("ButtonInfo");
+
+  /* ==========================================================
+   * クリアボタンの作成
+   * ========================================================== */
+  // 1. ボタン要素作成
+  const clearButton = document.createElement("button");
+  // 2. ラベル設定
+  clearButton.innerHTML = "クリア";
+  // 3. クラス設定
+  clearButton.classList.add("ButtonInfo");
+
+
+  /* ==========================================================
+   * 閉じるボタンの作成
+   * ========================================================== */
+  // 1. ボタン要素作成
+  const closeButton = document.createElement("button");
+  // 2. ラベル設定
+  closeButton.innerHTML = "閉じる";
+  // 3. クラス設定
+  closeButton.classList.add("ButtonInfo");
+
+  /* ==========================================================
+   * バックドロップの作成
+   * ========================================================== */
+  // 1. グループ要素作成
+  const DialogBackDrop = document.createElement("div");
+  // 2. クラス名設定
+  DialogBackDrop.className = "DialogBackDrop";
 
   /* ==========================================================
    * 各要素の格納
@@ -792,10 +805,12 @@ function CreateTextArea() {
   // 1. テキストエリアをダイアログ本体に格納
   dialogContainer.appendChild(textArea);
   // 2. 各ボタンをボタンコンテナに格納
-  ButtonContainer.append(closeButton, clearButton, resultButton);
+  ButtonContainer.append(resultButton, clearButton, closeButton);
   // 3. ボタンコンテナをダイアログ本体に格納
   dialogContainer.appendChild(ButtonContainer);
-  // 4. ダイアログ本体をボディに格納
+  // 4. バックドロップをボディに追加
+  document.body.appendChild(DialogBackDrop);
+  // 5. ダイアログ本体をボディに格納
   document.body.appendChild(dialogContainer);
 
   /* ==========================================================
@@ -808,13 +823,14 @@ function CreateTextArea() {
    * 閉じるボタンの処理関数を作成
    * ========================================================== */
   const closeDialog = () => {
-    // 1.ダイアログ本体をボディから取り除く
-    if (document.body.contains(dialogContainer)) {
+    // 1. ダイアログ本体をボディから取り除く
+    if (document.body.contains(dialogContainer) && document.body.contains(DialogBackDrop)) {
       document.body.removeChild(dialogContainer);
+      document.body.removeChild(DialogBackDrop);
     }
-    // 2.背景クリック無効化のクラスをボディから取り除く
+    // 2. 背景クリック無効化のクラスをボディから取り除く
     document.body.classList.remove("DialogActive");
-    // 3.ESCキーの押下時のイベントリスナーを取り除く
+    // 3. ESCキーの押下時のイベントリスナーを取り除く
     document.removeEventListener("keydown", escHandler);
   };
 

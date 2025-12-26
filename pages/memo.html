@@ -5,6 +5,7 @@
     <title></title>
     <link rel="stylesheet" href="../asetts/style.css" />
     <link rel="stylesheet" href="../asetts/util.css" />
+    <link rel="icon" href="../asetts/img/favicon/favicon.png" sizes="32x32" />
   </head>
   <body>
     <header class="HeaderInfo DefoultHeader">
@@ -12,40 +13,36 @@
 
       <ul class="ButtonWrapper">
         <li>
-          <button class="ButtonInfo RedButton" onclick="DeleteLearningInfo()">
+          <button class="ButtonInfo" onclick="DeleteLearningInfo()">
             投稿内容削除
           </button>
-          <button class="ButtonInfo BlueButton" onclick="PreateLearningInfo()">
+          <button class="ButtonInfo" onclick="PreateLearningInfo()">
             内容出力
           </button>
-          <button class="ButtonInfo BlueButton" onclick="ScrollTop()">
+          <button class="ButtonInfo" onclick="ScrollTop()">
             一番上へ
           </button>
-          <button class="ButtonInfo BlueButton" onclick="ScrollBottom()">
+          <button class="ButtonInfo" onclick="ScrollBottom()">
             一番下へ
           </button>
         </li>
       </ul>
 
       <div class="SearchFilterWrapper">
-        <button class="ButtonInfo BlueButton w-200" onclick="ClearSearch()">
+        <button class="ButtonInfo w-200" onclick="ClearSearch()">
           検索クリア
         </button>
         <input
           type="text"
           id="SearchWordForm"
-          class="titleForm"
+          class="FormInfo"
           maxlength="100"
           placeholder="フィルタリング"
-          onblur="SearchEvent()"
+          oninput="SearchEvent()"
         />
       </div>
     </header>
     <div id="postList"></div>
-    <div id="ImgDialog" class="modal">
-      <span class="close" onclick="ModalCloseEvent()">&times;</span>
-      <img class="modalContent" id="modalImg" />
-    </div>
 
     <footer>
       <div class="footerContainer">
@@ -56,7 +53,7 @@
             <input
               type="text"
               id="titleInput"
-              class="titleForm w-500"
+              class="FormInfo w-500"
               maxlength="100"
               placeholder="投稿タイトル"
             />
@@ -66,7 +63,7 @@
             <input
               type="text"
               id="SelectFileNameForm"
-              class="titleForm w-500"
+              class="FormInfo w-500"
               maxlength="100"
               placeholder="選択された画像"
               disabled
@@ -80,19 +77,19 @@
             <textarea
               id="bodyInput"
               placeholder="説明"
-              class="bodyForm min-w-1000 w-full"
-              style="min-width: 1004px"
+              class="TextAreaForm FormInfo w-full"
+              style="height: 100px; max-width: 1004px; min-width: 1004px;"
             ></textarea>
           </div>
         </div>
 
         <!-- 3段目 -->
         <div class="footerBtnList">
-          <button onclick="addPost()" class="ButtonInfo BlueButton">
+          <button onclick="addPost()" class="ButtonInfo">
             投稿
           </button>
           <div>
-            <label for="imageInput" class="ButtonInfo PoupuleButton"
+            <label for="imageInput" class="ButtonInfo ImgSelectButton"
               >画像選択</label
             >
             <input
@@ -102,16 +99,16 @@
               style="display: none"
             />
           </div>
-          <button onclick="clearEvent()" class="ButtonInfo YellowButton">
+          <button onclick="clearEvent()" class="ButtonInfo">
             クリア
           </button>
-          <button onclick="CreateTextArea()" class="ButtonInfo PinkButton">
+          <button onclick="CreateTextArea()" class="ButtonInfo">
             入力拡大
           </button>
           <button
             onclick="backPage()"
             id="backPageButton"
-            class="ButtonInfo RedButton"
+            class="ButtonInfo"
           >
             戻る
           </button>
@@ -120,6 +117,7 @@
     </footer>
     <script src="../script/public.js"></script>
     <script src="../script/utility.js"></script>
+    <script src="../script/ImgPreviewDialog.js"></script>
     <script src="../script/main.js"></script>
   </body>
 </html>
