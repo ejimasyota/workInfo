@@ -3,8 +3,8 @@
 /********************************/
 /* 1. ボディ */
 body {
-  font-family: sans-serif;
-  background-color: #f9f9f9;
+  font-family: 'MS UI Gothic', 'Tahoma', 'Geneva', 'sans-serif';
+  background: #004c4c;
   margin: 0;
   line-height: inherit;
   overflow-y: hidden;
@@ -12,6 +12,21 @@ body {
 /* 2. 全体にbox-sizingを指定 */
 * {
   box-sizing: border-box;
+}
+/* 3. 見出し */
+h2 {
+  font-family: "MS UI Gothic", "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
+  color: rgb(61, 61, 61);
+}
+/* 4. 見出し */
+h3{
+  font-family: "MS UI Gothic", "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
+  color: rgb(61, 61, 61);
+}
+/* 5. 段落 */
+p {
+  font-family: "MS UI Gothic", "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
+  color: rgb(61, 61, 61);
 }
 
 /********************************
@@ -69,76 +84,39 @@ body {
 /***************************************/
 /* 1. ボタンの基底クラス */
 .ButtonInfo {
-  padding: 10px 15px;
-  font-size: 16px;
-  border: none;
-  font-weight: bold;
-  border-radius: 3px;
-}
-/* 2. ボタンコンテナ */
-.ButtonWrapper button {
-  padding: 8px 12px;
-  font-size: 14px;
+  font-family: inherit;
+  font-size: 15px;
+  background: #e0e0e0;
+  border: 2px outset #fff;
+  border-right: 2px outset #808080;
+  border-bottom: 2px outset #808080;
+  color: #222;
+  padding: 2px 18px 2px 18px;
+  margin: 2px;
+  box-shadow: 1px 1px 0 #fff, 2px 2px 0 #808080;
   cursor: pointer;
-  white-space: nowrap;
+  border-radius: 0;
+  min-height: 32px;
 }
-/* 3. 青色ボタン */
-.BlueButton {
-  background-color: #2e3aeb;
-  color: white;
+.ButtonInfo:active {
+  border: 2px inset #808080;
+  background: #c0c0c0;
 }
-.BlueButton:hover {
-  background-color: #2833c9;
-  cursor: pointer;
-}
-/* 4. ピンク色ボタン */
-.PinkButton {
-  background-color: #f33d82;
-  color: white;
-}
-.PinkButton:hover {
-  background-color: #d83674;
-  cursor: pointer;
-}
-/* 5. 赤色ボタン */
-.RedButton {
-  background-color: #d82958;
-  color: white;
-}
-.RedButton:hover {
-  background-color: #c1244e;
-  cursor: pointer;
-}
-/* 6. 黄色ボタン */
-.YellowButton {
-  background-color: #a3b638;
-  color: white;
-}
-.YellowButton:hover {
-  background-color: #83922d;
-  cursor: pointer;
-}
-/* 7. 紫ボタン */
-.PoupuleButton {
-  background-color: #9c4acc;
-  color: white;
+/* 2. 画像選択ボタン用 */
+.ImgSelectButton {
   display: inline-flex;
   align-items: center;
   justify-content: center;
 }
-.PoupuleButton:hover {
-  background-color: #6c368b;
-  cursor: pointer;
-}
-
-/* 8. 削除・修正ボタンの親クラス */
+/* 3. 削除・修正ボタンの親クラス */
 .PostButtonWrapper {
   display: flex;
   gap: 4px;
 }
 
+
 /***************************************
-/* メニュー関係
+/* 5. メニュー関係
 /***************************************/
 /* メニューコンテナ */
 main {
@@ -158,15 +136,18 @@ main {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
   gap: 10px;
+  padding: 10px;
 }
 /* メニューのコンテンツボタン */
 .menuButton {
-  border-radius: 3px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
+  border-radius: 0;
+  border: 2px solid #fff #808080 #808080 #fff;
   background-color: #e6e6e6;
   max-height: 100px;
   min-height: 100px;
-  box-shadow: 0 0 6px gray;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+  padding: 6px 10px;
+  cursor: pointer;
 }
 /* メニューのコンテンツホバー時 */
 .menuButton:hover {
@@ -194,42 +175,63 @@ main {
 /***************************************
 /* セクション関係
 /***************************************/
-/* サイドバー */
+/* 1. サイドバー */
 .sideBar {
-  background-color: #ededed;
+  width: 220px;
+  background-color: #e0e0e0;
+  border-right: 2px solid #808080;
+  display: flex;
+  flex-direction: column;
   padding: 10px;
-  width: 250px;
-  border-radius: 4px;
-  box-shadow: 0 0 6px gray;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+  scrollbar-color: #a0a0a0 #d0d0d0;
+  scrollbar-width: thin;
 }
-/* セクションコンテナ */
+.sideBar::-webkit-scrollbar {
+  width: 12px;
+}
+.sideBar::-webkit-scrollbar-track {
+  background: #d0d0d0;
+  border-left: 1px solid #808080;
+}
+.sideBar::-webkit-scrollbar-thumb {
+  background: linear-gradient(145deg, #b0b0b0, #707070);
+  border: 2px solid #c0c0c0;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+}
+/* 2. セクションコンテナ */
 .SectionContainer {
   height: 100%;
   display: flex;
   flex-direction: column;
   gap: 4px;
 }
-/* セクションの上部のテキスト */
+/* 3. セクションの上部のテキスト */
 .SectionLabel {
   text-align: center;
   margin: 0;
-  color: rgb(61, 61, 61);
 }
-/* セクションボタン */
+/* 4. セクションボタン */
 .sectionButton {
-  border-radius: 3px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  background-color: #e6e6e6;
-  max-height: 50px;
-  min-height: 50px;
-  box-shadow: 0 0 6px gray;
-}
-/* セクションボタンホバー時 */
-.sectionButton:hover {
-  background-color: #cccccc;
+  background-color: #d4d0c8;
+  border: 2px solid #fff #808080 #808080 #fff;
+  box-shadow: 1px 1px 0 #808080, -1px -1px 0 #fff;
+  font-weight: bold;
+  font-size: 14px;
+  width: 100%;
+  text-align: left;
+  padding: 6px 10px;
   cursor: pointer;
 }
-/* 選択中のセクションの背景色 */
+.sectionButton:hover {
+  background-color: #c8c8c8;
+}
+.sectionButton:active {
+  border: 2px solid #808080 #fff #fff #808080;
+  box-shadow: none;
+}
 .sectionButton.selected {
   background-color: #928dff;
 }
@@ -239,11 +241,10 @@ main {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
-  color: rgb(61, 61, 61);
 }
 
 /* ダイアログ表示時の背景 */
-.dialogBackdrop {
+.DialogBackDrop {
   position: fixed;
   top: 0;
   left: 0;
@@ -286,34 +287,30 @@ main {
   margin-top:10px;
   margin-bottom: 0;
   overflow-x: auto;
-  border-radius: 4px;
+  border-radius: 0;
   white-space: pre;
 }
 
 /* ダイアログ */
-.dialogContainer {
+.MessageDialog {
   z-index: 1000;
   position: fixed;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: white;
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  background-color: #e6e6e6;
-  max-height: 500px;
-  min-height: 100px;
-  padding: 10px;
-  width: fit-content;
+  background-color: #c0c0c0;
+  border: 2px solid #fff #808080 #808080 #fff;
+  box-shadow: 2px 2px 0 #808080, -2px -2px 0 #fff;
+  padding: 0;
   min-width: 300px;
+  font-family: "MS UI Gothic", "MS Sans Serif", sans-serif;
+  padding: 10px;
 }
-
-/* ダイアログ表示テキスト */
-.dialogMessage {
-  margin: 0;
-  text-align: center;
-  font-size: 20px;
-  color: rgb(61, 61, 61);
+body.DialogActive {
+  pointer-events: none;
+}
+body.DialogActive .MessageDialog {
+  pointer-events: auto;
 }
 
 /* コンファーム内のボタン要素の親 */
@@ -321,6 +318,25 @@ main {
   padding-top: 20px;
   gap: 4px;
   display: flex;
+}
+
+.FullImageWrapper {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #1a1a1a;
+  padding: 10px;
+  background-color: #c0c0c0;
+  border:  solid #fff #808080 #808080 #fff;
+
+}
+/* 拡大画像自体の制御 */
+.FullPreviewImage {
+  max-width: 90vw;
+  max-height: 70vh;
+  object-fit: contain;
+  box-shadow: 2px 2px 0 #808080, -2px -2px 0 #fff;
 }
 
 /***************************************
@@ -334,11 +350,14 @@ main {
   left: 0;
   width: 100%;
   max-width: 100%;
-  background: #f9f9f9;
-  border-top: 1px solid #ccc;
+  background: #dddddd;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
+  box-shadow: 2px 2px 0 #808080;
   padding: 10px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   z-index: 100;
+
 }
 /* フッターの投稿入力フォーム : input */
 .footerInputContainer {
@@ -360,29 +379,23 @@ main {
   justify-content: left;
 }
 
-/* 投稿フォームのタイトル */
-.titleForm {
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  display: block;
-  width: 90%;
-  max-width: 500px;
-  margin: 5px auto;
-  padding: 8px;
-  font-size: 16px;
+/* 入力フォーム基底クラス */
+.FormInfo {
+  font-family: inherit;
+  font-size: 15px;
+  background: #fff;
+  border: 2px inset #808080;
+  color: #222;
+  padding: 4px 8px;
+  border-radius: 0;
+  margin: 4px 0;
+  box-sizing: border-box;
+  min-height: 32px;
 }
+
 /* 投稿フォームの説明 */
-.bodyForm {
-  width: 90%;
-  height: 100px;
+.TextAreaForm {
   resize: none;
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  display: block;
-  max-width: 500px;
-  margin: 5px auto;
-  padding: 8px;
-  font-size: 16px;
 }
 
 /* 投稿一覧 */
@@ -398,7 +411,7 @@ main {
 
 /* 投稿内容 */
 .PostListWrapper {
-  border-radius: 8px;
+  border-radius: 0;
   border: 1px solid #ccc;
   background: white;
   padding: 10px;
@@ -407,10 +420,11 @@ main {
 
 /* 投稿のタイトルエリア */
 .PostTitleWrapper {
+  margin-bottom: 4px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 8px;
+  border-radius: 0;
 }
 
 /* 投稿のタイトルテキスト */
@@ -438,8 +452,7 @@ main {
 /* 画像 */
 .PostImgInfo {
   cursor: pointer;
-  border-radius: 4px;
-  border: solid 1px;
+  border: 2px inset #808080;
   max-width: 150px;
   display: block;
   margin: 4px;
@@ -449,7 +462,6 @@ main {
   width: 20px;
   height: 20px;
   z-index: 10;
-  border-radius: 50%;
   background-color: #ff4d4d;
   font-weight: bold;
   color: white;
@@ -465,40 +477,6 @@ main {
 }
 .ImgDeleteButton:hover {
   background-color: #e14545;
-}
-
-/* モーダル */
-.modal {
-  display: none;
-  position: fixed;
-  z-index: 1000;
-  padding-top: 60px;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0, 0, 0, 0.5);
-}
-
-/* モーダル内の画像 */
-.modalContent {
-  margin: auto;
-  display: block;
-  max-width: 85%;
-  max-height: 85%;
-  border-radius: 4px;
-}
-
-/* モーダル閉じるボタン */
-.close {
-  position: absolute;
-  top: 10px;
-  right: 35px;
-  color: white;
-  font-size: 65px;
-  font-weight: bolder;
-  cursor: pointer;
 }
 
 /* コンテンツごとの枠線 */
@@ -530,7 +508,7 @@ main {
 .CollorSetting {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 0;
   border: solid 1px #3f3f3f;
 }
 /* 基本色 */
@@ -599,11 +577,6 @@ main {
   opacity: 1;
 }
 
-/* ユーザー情報画面のメイン */
-.userInfoMain {
-  background-color: #ededed;
-}
-
 /* ユーザー設定コンテナ */
 .userInfoContainer {
   width: 700px;
@@ -613,43 +586,6 @@ main {
   border-radius: 8px;
   box-shadow: 0 0 6px gray;
 }
-
-/* 入力欄ダイアログ : 2025/11/06 */
-.DialogContainer {
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border: 2px solid #fff;
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  background-color: #e6e6e6;
-  padding: 12px;
-  z-index: 9999;
-  transform: translate(-50%, -50%);
-  min-width: 400px;
-}
-
-body.DialogActive {
-  pointer-events: none;
-}
-
-body.DialogActive .DialogContainer {
-  pointer-events: auto;
-}
-
-.TextAreaFormForDialog {
-  font-size: 16px;
-  border-radius: 8px;
-  border-color: var(--fallback-bc, oklch(85.142% 0.0001 271.152));
-  background-color: #fff;
-  resize: none;
-  padding: 4px;
-  box-sizing: border-box;
-  display: block;
-  margin: 5px auto 10px auto;
-}
-
 .SummaryDialogButtonForm {
   display: flex;
   justify-content: flex-end;
