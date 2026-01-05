@@ -169,7 +169,8 @@ main {
   margin: 0;
   background-size: cover;
   display: flex;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: left;
 }
 
 /***************************************
@@ -500,7 +501,7 @@ body.DialogActive .MessageDialog {
   height: 20px;
   left: 24px;
   top: -18px;
-  background-color: #f9f9f9;
+  background-color: #e0e0e0;
   width: fit-content;
 }
 
@@ -582,9 +583,15 @@ body.DialogActive .MessageDialog {
   width: 700px;
   margin-right: auto;
   margin-left: auto;
-  background-color: #f9f9f9;
-  border-radius: 8px;
+  border-radius: 0px;
   box-shadow: 0 0 6px gray;
+  background-color: #e0e0e0;
+  border-right: 2px solid #808080;
+  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
+  overflow-y: auto;
+  max-height: calc(100vh - 40px);
+  scrollbar-color: #a0a0a0 #d0d0d0;
+  scrollbar-width: thin;
 }
 .SummaryDialogButtonForm {
   display: flex;

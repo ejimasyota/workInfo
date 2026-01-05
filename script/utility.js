@@ -110,3 +110,39 @@ function GetMessageInfo(type, cd, msg = "") {
   // 1.戻り値を設定
   return ReturnMessage;
 }
+
+/**
+ * 現在年月日を作成し返す
+ */
+function CreatYear() {
+  // 1.現在年月日を取得
+  const now = new Date();
+  // 2.年を取得
+  const year = now.getFullYear();
+  // 3.月を取得
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  // 4.日を取得
+  const day = String(now.getDate()).padStart(2, "0");
+  // 5.時間を取得
+  const hours = String(now.getHours()).padStart(2, "0");
+  // 6.分を取得
+  const minutes = String(now.getMinutes()).padStart(2, "0");
+  // 7.秒を取得
+  const seconds = String(now.getSeconds()).padStart(2, "0");
+  // 8.整形して返す
+  return `${year}年${month}月${day}日_${hours}時${minutes}分${seconds}秒`;
+}
+
+/**
+ * 直線を返す処理　--2025/08/20 コードが汚くなりすぎたので作成
+ */
+function CreateLine(LineNumber = 150) {
+  // 1. 直線を保持する
+  let Line = "";
+  // 2. 指定文字数の直線文字列を作成
+  for (let Index = 0; Index < LineNumber; Index++) {
+    Line += "_";
+  }
+  // 3. 呼び出しもとに返す
+  return Line;
+}

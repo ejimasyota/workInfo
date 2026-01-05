@@ -645,7 +645,7 @@ function PreateLearningInfo() {
 
   /* ダウンロード処理 */
   // 1.バイナリデータの作成
-  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([csvData], { type: "text/plain;charset=utf-8;" });
   // 2.URLの作成
   const url = URL.createObjectURL(blob);
   // 3.アンカーの作成
@@ -653,7 +653,7 @@ function PreateLearningInfo() {
   // 4.遷移先に、項番2で作成したURLを設定
   a.href = url;
   // 5.ファイル名設定
-  a.download = `${LearningHeader}_${CreatYear()}.csv`;
+  a.download = `${LearningHeader}_${CreatYear()}.txt`;
   // 6.アンカークリック時のイベントを発火
   a.click();
   // 7.URLの削除(ネット上のコピペのため不明点は調べる)
@@ -698,7 +698,7 @@ function OutputPostInfo(Index) {
     `\n【${SectionName} : ${LearningHeader}】\n${CreateLine()}\n\n` + PrintData;
   /* ダウンロード処理 */
   // 1.バイナリデータの作成
-  const blob = new Blob([csvData], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob([csvData], { type: "text/plain;charset=utf-8;" });
   // 2.URLの作成
   const url = URL.createObjectURL(blob);
   // 3.アンカーの作成
@@ -706,7 +706,7 @@ function OutputPostInfo(Index) {
   // 4.遷移先に、項番2で作成したURLを設定
   a.href = url;
   // 5.ファイル名設定
-  a.download = `${post.title}_${CreatYear()}.csv`;
+  a.download = `${post.title}_${CreatYear()}.txt`;
   // 6.アンカークリック時のイベントを発火
   a.click();
   // 7.URLの削除(ネット上のコピペのため不明点は調べる)
@@ -927,13 +927,13 @@ function backPage() {
  */
 function clearEvent() {
   /* 事前定義 */
-  // 1.タイトル要素の取得
+  // 1. タイトル要素の取得
   const titleInput = document.getElementById("titleInput").value.trim();
-  // 2.本文要素の取得
+  // 2. 本文要素の取得
   const bodyInput = document.getElementById("bodyInput").value.trim();
-  // 3.画像要素の取得
+  // 3. 画像要素の取得
   const imageInput = document.getElementById("imageInput").files[0];
-  // 4.画像名要素の取得
+  // 4. 画像名要素の取得
   const imageName = document.getElementById("SelectFileNameForm").value.trim();
 
   /* 入力途中の要素が存在する場合 */
@@ -1013,14 +1013,20 @@ function PostCopy(bodyElement, Index) {
 
 /**
  * 修正ボタン押下時の処理
- * @param {*} Index 選択中の投稿インデックス
+ * @param {int} Index 選択中の投稿インデックス
  */
 function EditPostInfo(Index) {
-  const post = SavePostArray[Index];
-  document.getElementById("titleInput").value = post.title;
-  document.getElementById("bodyInput").value = post.body;
-  document.getElementById("SelectFileNameForm").value = post.imagename || "";
+  // 1. 編集対象の投稿内容を取得
+  const EditPost = SavePostArray[Index];
+  // 2. 入力フォームに値をセット
+  document.getElementById("titleInput").value = EditPost.title;
+  // 3. 本文入力フォームに値をセット
+  document.getElementById("bodyInput").value = EditPost.body;
+  // 4. 画像名入力フォームに値をセット
+  document.getElementById("SelectFileNameForm").value = EditPost.imagename || "";
+  // 5. 編集中のインデックスを設定
   EditIndex = Index;
+  // 6. 画面スクロールを最下部に移動
   window.scrollTo(0, document.body.scrollHeight);
 }
 
@@ -1077,42 +1083,6 @@ function ScrollBottom() {
   if (postListEl) {
     postListEl.scrollTop = postListEl.scrollHeight;
   }
-}
-
-/**
- * 現在年月日を作成し返す
- */
-function CreatYear() {
-  // 1.現在年月日を取得
-  const now = new Date();
-  // 2.年を取得
-  const year = now.getFullYear();
-  // 3.月を取得
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  // 4.日を取得
-  const day = String(now.getDate()).padStart(2, "0");
-  // 5.時間を取得
-  const hours = String(now.getHours()).padStart(2, "0");
-  // 6.分を取得
-  const minutes = String(now.getMinutes()).padStart(2, "0");
-  // 7.秒を取得
-  const seconds = String(now.getSeconds()).padStart(2, "0");
-  // 8.整形して返す
-  return `${year}年${month}月${day}日_${hours}時${minutes}分${seconds}秒`;
-}
-
-/**
- * 直線を返す処理　--2025/08/20 コードが汚くなりすぎたので作成
- */
-function CreateLine(LineNumber = 150) {
-  // 1.直線を保持する
-  let Line = "";
-  // 2.とりあえず150文字の直線を作成
-  for (let Index = 0; Index < LineNumber; Index++) {
-    Line += "_";
-  }
-  // 3.返す
-  return Line;
 }
 
 /**

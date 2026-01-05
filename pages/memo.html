@@ -29,9 +29,6 @@
       </ul>
 
       <div class="SearchFilterWrapper">
-        <button class="ButtonInfo w-200" onclick="ClearSearch()">
-          検索クリア
-        </button>
         <input
           type="text"
           id="SearchWordForm"
@@ -40,6 +37,9 @@
           placeholder="フィルタリング"
           oninput="SearchEvent()"
         />
+        <button class="ButtonInfo w-200" onclick="ClearSearch()">
+          検索クリア
+        </button>
       </div>
     </header>
     <div id="postList"></div>

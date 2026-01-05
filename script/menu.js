@@ -9,6 +9,7 @@ const menuList = [
   { section: "自己学習", key: "Web通信について", icon: "" },
   { section: "自己学習", key: "ネットワークの基礎", icon: "" },
   { section: "自己学習", key: "サーバについて", icon: "" },
+  { section: "自己学習", key: "正規表現について", icon: "" },
   { section: "業務活用", key: "議事録", icon: "" },
   { section: "業務活用", key: "業務内のメモ", icon: "" },
   { section: "業務活用", key: "電話対応のメモ", icon: "" },
@@ -48,6 +49,9 @@ const menuList = [
   { section: "OS", key: "Linux", icon: "" },
   { section: "エディター", key: "Vim", icon: "Vim.png" },
   { section: "個人用", key: "参考サイト", icon: "" },
+  { section: "個人用", key: "プロジェクトURL", icon: "" },
+  { section: "個人用", key: "アイデア", icon: "" },
+  { section: "プロジェクト", key: "宮崎", icon: "" },
 ];
 
 // 2.セクションリスト(これも上記と同様。いずれlocalStrageに保持するように変更して、カプセル化を行う)
@@ -59,6 +63,7 @@ const sectionList = [
   { section: "OS", icon: "" },
   { section: "エディター", icon: "" },
   { section: "個人用", icon: "" },
+  { section: "プロジェクト", icon: "" },
 ];
 
 // 3.ダイアログのインスタンスを作成
