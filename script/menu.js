@@ -318,7 +318,7 @@ function CreatYear() {
  */
 function UserInfo() {
   // 1.ユーザー設定画面へ遷移
-  window.location.href = "../pages/userInfo.html";
+  window.location.href = "pages/userInfo.html";
 }
 
 /**
