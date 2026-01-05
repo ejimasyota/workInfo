@@ -150,7 +150,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // 1.画像要素作成
           const img = document.createElement("img");
           // 2.画像のパスを設定
-          img.src = `/asetts/img/icon/${menuItem.icon}`;
+          img.src = `asetts/img/icon/${menuItem.icon}`;
           // 3.画像のクラスを設定
           img.className = "IconImg";
           // 4.ボタンに画像を追加
@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         /* ボタンのクリックイベント設定 */
         menuButton.onclick = () => {
           // 1.クリック時にメモ画面へ遷移(キーをパラメータとして渡す)
-          window.location.href = `/pages/memo.html?key=${encodeURIComponent(
+          window.location.href = `pages/memo.html?key=${encodeURIComponent(
             menuItem.key
           )}`;
           // 2.セッションに保持されたセクション情報の削除
@@ -318,7 +318,7 @@ function CreatYear() {
  */
 function UserInfo() {
   // 1.ユーザー設定画面へ遷移
-  window.location.href = "/pages/userInfo.html";
+  window.location.href = "pages/userInfo.html";
 }
 
 /**
