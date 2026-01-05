@@ -160,7 +160,7 @@ document.addEventListener("DOMContentLoaded", function () {
         /* ボタンのクリックイベント設定 */
         menuButton.onclick = () => {
           // 1.クリック時にメモ画面へ遷移(キーをパラメータとして渡す)
-          window.location.href = `workInfo/pages/memo.html?key=${encodeURIComponent(
+          window.location.href = `pages/memo.html?key=${encodeURIComponent(
             menuItem.key
           )}`;
           // 2.セッションに保持されたセクション情報の削除
