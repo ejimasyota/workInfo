@@ -110,3 +110,31 @@ class DialogInfo {
 /* クラスの公開 */
 // 1.ダイアログクラス
 window.DialogInfo = DialogInfo;
+
+/* ==========================================================
+ * ヘッダーカラー共通適用処理
+ * ========================================================== */
+/**
+ * ヘッダーの背景色をlocalStorageから読み込み適用する
+ * 全ページ共通で呼び出す
+ */
+function ApplyHeaderColor() {
+  // 1. ヘッダー要素を取得
+  const headerElement = document.querySelector(".HeaderInfo");
+  // 2. ストレージから背景色取得
+  const savedColorClass = localStorage.getItem("selectedHeaderColor");
+
+  // 3. ヘッダーと背景色が存在する場合
+  if (headerElement && savedColorClass) {
+    // 1. DefoultHeaderクラスを除去（デフォルト色を上書きするため）
+    headerElement.classList.remove("DefoultHeader");
+    // 2. 既存のSettingColor-*クラスを除去
+    Array.from(headerElement.classList).forEach((cls) => {
+      if (cls.startsWith("SettingColor-")) {
+        headerElement.classList.remove(cls);
+      }
+    });
+    // 3. 保存された背景色クラスを追加
+    headerElement.classList.add(savedColorClass);
+  }
+}

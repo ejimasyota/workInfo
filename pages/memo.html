@@ -1,7 +1,8 @@
 <!DOCTYPE html>
 <html lang="ja">
-  <head name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
     <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title></title>
     <link rel="stylesheet" href="../asetts/style.css" />
     <link rel="stylesheet" href="../asetts/util.css" />
@@ -65,7 +66,7 @@
               id="SelectFileNameForm"
               class="FormInfo w-500"
               maxlength="100"
-              placeholder="選択された画像"
+              placeholder="選択された画像（最大4枚）"
               disabled
             />
           </div>
@@ -96,6 +97,7 @@
               type="file"
               id="imageInput"
               accept="image/*"
+              multiple
               style="display: none"
             />
           </div>

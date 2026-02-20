@@ -7,7 +7,7 @@ body {
   background: #004c4c;
   margin: 0;
   line-height: inherit;
-  overflow-y: hidden;
+  overflow-y: auto;
 }
 /* 2. 全体にbox-sizingを指定 */
 * {
@@ -114,7 +114,6 @@ p {
   gap: 4px;
 }
 
-
 /***************************************
 /* 5. メニュー関係
 /***************************************/
@@ -141,13 +140,17 @@ main {
 /* メニューのコンテンツボタン */
 .menuButton {
   border-radius: 0;
-  border: 2px solid #fff #808080 #808080 #fff;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
   background-color: #e6e6e6;
   max-height: 100px;
   min-height: 100px;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
   padding: 6px 10px;
   cursor: pointer;
+  position: relative;
 }
 /* メニューのコンテンツホバー時 */
 .menuButton:hover {
@@ -173,6 +176,44 @@ main {
   align-items: left;
 }
 
+/* メニュー削除ボタン */
+.menuDeleteButton {
+  position: absolute;
+  bottom: 4px;
+  right: 4px;
+  width: 20px;
+  height: 20px;
+  background-color: #ff4d4d;
+  color: white;
+  font-weight: bold;
+  border: solid 1px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 12px;
+  z-index: 10;
+}
+.menuDeleteButton:hover {
+  background-color: #e14545;
+}
+
+/* メニュー追加ボタン */
+.menuAddButton {
+  border: 2px dashed #808080;
+  background-color: transparent;
+  color: #666;
+  font-size: 18px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+.menuAddButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
+}
+
 /***************************************
 /* セクション関係
 /***************************************/
@@ -189,6 +230,7 @@ main {
   max-height: calc(100vh - 40px);
   scrollbar-color: #a0a0a0 #d0d0d0;
   scrollbar-width: thin;
+  z-index: 11;
 }
 .sideBar::-webkit-scrollbar {
   width: 12px;
@@ -217,7 +259,10 @@ main {
 /* 4. セクションボタン */
 .sectionButton {
   background-color: #d4d0c8;
-  border: 2px solid #fff #808080 #808080 #fff;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
   box-shadow: 1px 1px 0 #808080, -1px -1px 0 #fff;
   font-weight: bold;
   font-size: 14px;
@@ -230,7 +275,10 @@ main {
   background-color: #c8c8c8;
 }
 .sectionButton:active {
-  border: 2px solid #808080 #fff #fff #808080;
+  border-top: 2px solid #808080;
+  border-left: 2px solid #808080;
+  border-right: 2px solid #fff;
+  border-bottom: 2px solid #fff;
   box-shadow: none;
 }
 .sectionButton.selected {
@@ -268,7 +316,6 @@ main {
   margin-top: 0;
   font-size: 1.2rem;
   font-weight: bold;
-
 }
 .md-link {
   color: #1a73e8;
@@ -292,6 +339,34 @@ main {
   white-space: pre;
 }
 
+/* 差分コードブロック */
+.DiffBlock {
+  background: #f8f8f8;
+  display: block;
+}
+.diff-add {
+  background-color: #e6ffec;
+  color: #1a7f37;
+  display: block;
+}
+.diff-remove {
+  background-color: #ffebe9;
+  color: #cf222e;
+  display: block;
+}
+
+/* マークダウンリスト */
+.md-list {
+  margin: 4px 0;
+  padding-left: 20px;
+  list-style-type: disc;
+}
+.md-list-item {
+  color: rgb(61, 61, 61);
+  font-size: 16px;
+  line-height: 1.5;
+}
+
 /* ダイアログ */
 .MessageDialog {
   z-index: 1000;
@@ -300,9 +375,11 @@ main {
   left: 50%;
   transform: translate(-50%, -50%);
   background-color: #c0c0c0;
-  border: 2px solid #fff #808080 #808080 #fff;
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
   box-shadow: 2px 2px 0 #808080, -2px -2px 0 #fff;
-  padding: 0;
   min-width: 300px;
   font-family: "MS UI Gothic", "MS Sans Serif", sans-serif;
   padding: 10px;
@@ -326,11 +403,12 @@ body.DialogActive .MessageDialog {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #1a1a1a;
   padding: 10px;
   background-color: #c0c0c0;
-  border:  solid #fff #808080 #808080 #fff;
-
+  border-top: 2px solid #fff;
+  border-left: 2px solid #fff;
+  border-right: 2px solid #808080;
+  border-bottom: 2px solid #808080;
 }
 /* 拡大画像自体の制御 */
 .FullPreviewImage {
@@ -354,11 +432,9 @@ body.DialogActive .MessageDialog {
   background: #dddddd;
   border-right: 2px solid #808080;
   border-bottom: 2px solid #808080;
-  box-shadow: 2px 2px 0 #808080;
   padding: 10px;
   box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.1);
   z-index: 100;
-
 }
 /* フッターの投稿入力フォーム : input */
 .footerInputContainer {
@@ -450,6 +526,17 @@ body.DialogActive .MessageDialog {
 /***************************************
 /* 画像関係
 /***************************************/
+/* 画像ラッパー（横並び） */
+.PostImgWrapper {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 4px;
+}
+/* 個別画像コンテナ */
+.PostImgContainer {
+  position: relative;
+}
 /* 画像 */
 .PostImgInfo {
   cursor: pointer;
@@ -472,9 +559,9 @@ body.DialogActive .MessageDialog {
   align-items: center;
   cursor: pointer;
   font-size: 14px;
-  position: relative;
-  top: 10px;
-  right: 5px;
+  position: absolute;
+  top: 4px;
+  right: 4px;
 }
 .ImgDeleteButton:hover {
   background-color: #e14545;
@@ -584,7 +671,6 @@ body.DialogActive .MessageDialog {
   margin-right: auto;
   margin-left: auto;
   border-radius: 0px;
-  box-shadow: 0 0 6px gray;
   background-color: #e0e0e0;
   border-right: 2px solid #808080;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
@@ -598,4 +684,183 @@ body.DialogActive .MessageDialog {
   justify-content: flex-end;
   gap: 8px;
   margin-top: 5px;
+}
+
+/* サイドバートグルボタン（モバイル用） */
+.sidebarToggleButton {
+  position: fixed;
+  top: 55px;
+  left: 5px;
+  z-index: 101;
+  width: 40px;
+  height: 40px;
+  font-size: 24px;
+  background: #e0e0e0;
+  border: 2px outset #fff;
+  border-right: 2px outset #808080;
+  border-bottom: 2px outset #808080;
+  cursor: pointer;
+}
+
+/* ==============================
+ * レスポンシブ対応
+ * ============================== */
+
+/* タブレット (768px以下) */
+@media screen and (max-width: 768px) {
+  /* 1. メニューグリッドを3列に変更 */
+  .menuContainer {
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    padding: 8px;
+  }
+
+  /* 2. サイドバーの幅を縮小 */
+  .sideBar {
+    width: 180px;
+    padding: 6px;
+  }
+
+  /* 3. セクションテキストのサイズを縮小 */
+  .sectionText {
+    font-size: 16px;
+  }
+
+  /* 4. メニューテキストのサイズを縮小 */
+  .menuText {
+    font-size: 16px;
+  }
+
+  /* 5. ヘッダーテキストのサイズを縮小 */
+  .HeaderText {
+    font-size: 20px;
+  }
+
+  /* 6. フッターの入力欄を縦並びに */
+  .footerInputContainer {
+    flex-direction: column;
+  }
+
+  /* 7. テキストエリアの固定幅を解除 */
+  #bodyInput {
+    max-width: 100% !important;
+    min-width: 100% !important;
+  }
+
+  /* 8. 投稿リストの高さを調整 */
+  #postList {
+    height: calc(100vh - 300px);
+    max-height: calc(100vh - 300px);
+  }
+
+  /* 9. メニューリストの高さを調整 */
+  .menuList {
+    max-height: calc(100vh - 100px);
+  }
+
+  /* 10. ボタンの文字サイズを縮小 */
+  .ButtonInfo {
+    font-size: 13px;
+    padding: 2px 12px;
+  }
+
+  /* 11. フッターのボタン群を折り返し可能に */
+  .footerBtnList {
+    flex-wrap: wrap;
+  }
+
+  /* 12. 検索フィルターの幅調整 */
+  .SearchFilterWrapper {
+    flex-wrap: wrap;
+  }
+}
+
+/* モバイル (480px以下) */
+@media screen and (max-width: 480px) {
+  /* 1. サイドバーを非表示にして全幅利用 */
+  .sideBar {
+    position: fixed;
+    left: -220px;
+    top: 50px;
+    height: calc(100vh - 50px);
+    width: 220px;
+    transition: left 0.3s ease;
+    z-index: 100;
+  }
+
+  /* 2. サイドバー展開時 */
+  .sideBar.open {
+    left: 0;
+  }
+
+  /* 3. メインレイアウトを単一列に */
+  main {
+    flex-direction: column;
+  }
+
+  /* 4. メニューグリッドを2列に変更 */
+  .menuContainer {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 6px;
+    padding: 6px;
+  }
+
+  /* 5. メニューリストを全幅に */
+  .menuList {
+    margin: 10px;
+    max-height: calc(100vh - 120px);
+  }
+
+  /* 6. ヘッダーテキストのサイズを縮小 */
+  .HeaderText {
+    font-size: 16px;
+  }
+
+  /* 7. ヘッダーボタン群を非表示（トグル切り替え用） */
+  .ButtonWrapper {
+    display: none;
+  }
+
+  /* 8. ヘッダーボタン群の展開時 */
+  .ButtonWrapper.open {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 50px;
+    right: 0;
+    background: #e0e0e0;
+    border: 2px solid #808080;
+    padding: 8px;
+    z-index: 200;
+  }
+
+  /* 9. フッターの入力フォーム幅を100%に */
+  .FormInfo.w-500 {
+    width: 100%;
+  }
+
+  /* 10. 投稿リストの高さを可変に */
+  #postList {
+    height: calc(100vh - 350px);
+    max-height: calc(100vh - 350px);
+  }
+
+  /* 11. 検索フィルターを全幅に */
+  .SearchFilterWrapper {
+    width: 100%;
+    flex-direction: column;
+  }
+
+  /* 12. メニューボタンの高さを縮小 */
+  .menuButton {
+    min-height: 70px;
+    max-height: 70px;
+  }
+
+  /* 13. ダイアログの幅を画面幅に合わせる */
+  .MessageDialog {
+    min-width: auto;
+    width: 90vw;
+    max-width: 90vw;
+  }
 }

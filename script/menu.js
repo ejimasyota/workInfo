@@ -1,9 +1,12 @@
-/* 事前定義 */
-// 1.メニューリストに表示する内容
+/* ==========================================================
+ * 事前定義
+ * ========================================================== */
+// 1. デフォルトメニューリスト（初期データ用）
 /**********************************************************************************
- * ※ 今の構成ではkeyの値を変えたらデータにアクセスできなくなるので変えてはならない!! ※ *
+ * ※ 初回ロード時にlocalStorageへUUID付きで格納される初期データ                    *
+ * ※ 以降のデータ管理はすべてlocalStorageを通じて行う                              *
  **********************************************************************************/
-const menuList = [
+const DEFAULT_MENU_LIST = [
   { section: "自己学習", key: "調べたこと", icon: "" },
   { section: "自己学習", key: "アクセス修飾子一覧", icon: "" },
   { section: "自己学習", key: "Web通信について", icon: "" },
@@ -54,8 +57,8 @@ const menuList = [
   { section: "プロジェクト", key: "宮崎", icon: "" },
 ];
 
-// 2.セクションリスト(これも上記と同様。いずれlocalStrageに保持するように変更して、カプセル化を行う)
-const sectionList = [
+// 2. デフォルトセクションリスト（初期データ用）
+const DEFAULT_SECTION_LIST = [
   { section: "業務活用", icon: "" },
   { section: "自己学習", icon: "" },
   { section: "基本情報", icon: "" },
@@ -66,142 +69,505 @@ const sectionList = [
   { section: "プロジェクト", icon: "" },
 ];
 
-// 3.ダイアログのインスタンスを作成
+// 3. ダイアログのインスタンスを作成
 const dialog = new DialogInfo();
 
-/* 画面ロード時処理 */
-document.addEventListener("DOMContentLoaded", function () {
-  /* ------------------------------
-   * ヘッダーカラーの設定
-   * 作成日 : 2025/09/08
-   * 更新日 : 2025/12/22
-   * ------------------------------*/
-  /* 1. 事前定義 */
-  // 1.ヘッダー要素を取得
-  const HeaderColor = document.querySelector(".HeaderInfo");
-  // 2.ストレージから背景色取得
-  const SavedColorClass = localStorage.getItem("selectedHeaderColor");
-    
-  /* 2. ヘッダーと背景色が存在する場合 */
-  if (HeaderColor && SavedColorClass) {
-    // 1. ヘッダーのクラスをすべて除去
-    Array.from(HeaderColor.classList).forEach((Class)=>{
-      HeaderColor.classList.remove(Class)
-    });
-    // 2. ヘッダーの基底クラスとストレージに保管された背景色クラスを設定
-    HeaderColor.classList.add("HeaderInfo", SavedColorClass);
+/* ==========================================================
+ * localStorageアクセサ関数
+ * ========================================================== */
+/**
+ * セクションリストをlocalStorageから取得する
+ * @returns {Array} セクションリスト
+ */
+function GetSectionList() {
+  return JSON.parse(localStorage.getItem("sectionList") || "[]");
+}
+
+/**
+ * メニューリストをlocalStorageから取得する
+ * @returns {Array} メニューリスト
+ */
+function GetMenuList() {
+  return JSON.parse(localStorage.getItem("menuList") || "[]");
+}
+
+/**
+ * メニューリストをlocalStorageに保存する
+ * @param {Array} menuList メニューリスト
+ */
+function SaveMenuList(menuList) {
+  localStorage.setItem("menuList", JSON.stringify(menuList));
+}
+
+/**
+ * セクションリストをlocalStorageに保存する
+ * @param {Array} sectionList セクションリスト
+ */
+function SaveSectionList(sectionList) {
+  localStorage.setItem("sectionList", JSON.stringify(sectionList));
+}
+
+/* ==========================================================
+ * ストレージ初期化処理
+ * ========================================================== */
+/**
+ * localStorageにメニュー・セクションデータが存在しない場合、
+ * デフォルトデータからUUID付きで初期化する
+ */
+function InitializeStorageData() {
+  /* ---------------------------------------------
+   *  1. セクションリストの初期化
+   * --------------------------------------------- */
+  if (!localStorage.getItem("sectionList")) {
+    // 1. デフォルトセクションにUUIDを付与して保存
+    const sections = DEFAULT_SECTION_LIST.map((item, index) => ({
+      id: crypto.randomUUID(),
+      name: item.section,
+      icon: item.icon,
+      order: index,
+    }));
+    localStorage.setItem("sectionList", JSON.stringify(sections));
   }
 
+  /* ---------------------------------------------
+   *  2. メニューリストの初期化
+   * --------------------------------------------- */
+  if (!localStorage.getItem("menuList")) {
+    // 1. セクションリストを取得してname->idマップを作成
+    const sections = JSON.parse(localStorage.getItem("sectionList"));
+    const sectionMap = {};
+    sections.forEach((s) => {
+      sectionMap[s.name] = s.id;
+    });
+
+    // 2. デフォルトメニューにUUIDを付与して保存
+    const menus = DEFAULT_MENU_LIST.map((item, index) => ({
+      id: crypto.randomUUID(),
+      sectionId: sectionMap[item.section] || null,
+      name: item.key,
+      icon: item.icon,
+      order: index,
+      legacyKey: item.key,
+    }));
+    localStorage.setItem("menuList", JSON.stringify(menus));
+  }
+
+  /* ---------------------------------------------
+   *  3. 既存投稿データのマイグレーション
+   * --------------------------------------------- */
+  MigratePostData();
+}
+
+/**
+ * 既存の投稿データにmenuIdが存在しない場合、
+ * legacyKeyを使ってmenuIdを付与する
+ */
+function MigratePostData() {
+  // 1. 投稿データを取得
+  const posts = JSON.parse(localStorage.getItem("savedPosts") || "[]");
+  // 2. メニューリストを取得
+  const menus = JSON.parse(localStorage.getItem("menuList") || "[]");
+
+  // 3. legacyKey -> id のマップを作成
+  const keyToIdMap = {};
+  menus.forEach((m) => {
+    keyToIdMap[m.legacyKey] = m.id;
+  });
+
+  // 4. menuIdが未設定の投稿にmenuIdを付与
+  let migrated = false;
+  posts.forEach((post) => {
+    if (!post.menuId && post.key) {
+      const menuId = keyToIdMap[post.key];
+      if (menuId) {
+        post.menuId = menuId;
+        migrated = true;
+      }
+    }
+  });
+
+  // 5. 変更があれば保存
+  if (migrated) {
+    localStorage.setItem("savedPosts", JSON.stringify(posts));
+  }
+}
+
+/* ==========================================================
+ * メニュー削除関連
+ * ========================================================== */
+/**
+ * 指定メニューIDに紐づく投稿データをlocalStorageから削除する
+ * @param {string} menuId 削除対象のメニューID
+ */
+function DeleteMenuPosts(menuId) {
+  // 1. 投稿データを取得
+  const posts = JSON.parse(localStorage.getItem("savedPosts") || "[]");
+  // 2. 対象メニューの投稿を除外
+  const filtered = posts.filter((post) => post.menuId !== menuId);
+  // 3. 保存
+  localStorage.setItem("savedPosts", JSON.stringify(filtered));
+}
+
+/**
+ * 指定メニューIDをメニューリストから削除する
+ * @param {string} menuId 削除対象のメニューID
+ */
+function DeleteMenuItem(menuId) {
+  // 1. メニューリストを取得
+  const menus = GetMenuList();
+  // 2. 対象メニューを除外
+  const filtered = menus.filter((m) => m.id !== menuId);
+  // 3. 保存
+  SaveMenuList(filtered);
+}
+
+/* ==========================================================
+ * メニュー追加ダイアログ
+ * ========================================================== */
+/**
+ * メニュー追加ダイアログを表示する
+ * @param {string} sectionId 追加先のセクションID
+ * @param {HTMLElement} sectionButton 再描画用のセクションボタン要素
+ */
+function ShowAddMenuDialog(sectionId, sectionButton) {
+  /* ---------------------------------------------
+   *  1. ダイアログ本体の作成
+   * --------------------------------------------- */
+  // 1. グループ要素作成
+  const dialogContainer = document.createElement("div");
+  // 2. クラス設定
+  dialogContainer.className = "MessageDialog";
+
+  /* ---------------------------------------------
+   *  2. メニュー名入力フォームの作成
+   * --------------------------------------------- */
+  // 1. ラベル要素作成
+  const label = document.createElement("p");
+  // 2. ラベル設定
+  label.textContent = "メニュー名を入力してください";
+  // 3. クラス設定
+  label.className = "dialogMessage";
+
+  // 4. 入力フォーム作成
+  const input = document.createElement("input");
+  // 5. 属性設定
+  input.type = "text";
+  input.maxLength = 50;
+  input.placeholder = "メニュー名";
+  input.className = "FormInfo";
+  input.style.width = "100%";
+
+  /* ---------------------------------------------
+   *  3. ボタンコンテナの作成
+   * --------------------------------------------- */
+  const btnContainer = document.createElement("div");
+  btnContainer.className = "ConfirmButtonForm";
+
+  /* ---------------------------------------------
+   *  4. 追加ボタンの作成
+   * --------------------------------------------- */
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "追加";
+  addBtn.classList.add("ButtonInfo");
+
+  /* ---------------------------------------------
+   *  5. 閉じるボタンの作成
+   * --------------------------------------------- */
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "閉じる";
+  closeBtn.classList.add("ButtonInfo");
+
+  /* ---------------------------------------------
+   *  6. バックドロップの作成
+   * --------------------------------------------- */
+  const backdrop = document.createElement("div");
+  backdrop.className = "DialogBackDrop";
+
+  /* ---------------------------------------------
+   *  7. DOM組み立て
+   * --------------------------------------------- */
+  dialogContainer.appendChild(label);
+  dialogContainer.appendChild(input);
+  btnContainer.appendChild(addBtn);
+  btnContainer.appendChild(closeBtn);
+  dialogContainer.appendChild(btnContainer);
+  document.body.appendChild(backdrop);
+  document.body.appendChild(dialogContainer);
+
+  // 8. 初期フォーカス
+  input.focus();
+
+  /* ---------------------------------------------
+   *  8. 閉じる処理
+   * --------------------------------------------- */
+  const closeDialog = () => {
+    if (
+      document.body.contains(dialogContainer) &&
+      document.body.contains(backdrop)
+    ) {
+      document.body.removeChild(dialogContainer);
+      document.body.removeChild(backdrop);
+    }
+  };
+
+  /* ---------------------------------------------
+   *  9. 追加ボタンのクリックイベント
+   * --------------------------------------------- */
+  addBtn.onclick = () => {
+    // 1. 入力値を取得
+    const menuName = input.value.trim();
+
+    // 2. バリデーション（空文字）
+    if (!menuName) {
+      dialog.ShowDialog(GetMessageInfo("error", "006", "メニュー名"));
+      return;
+    }
+
+    // 3. 重複チェック
+    const existingMenus = GetMenuList();
+    const isDuplicate = existingMenus.some(
+      (m) => m.sectionId === sectionId && m.name === menuName
+    );
+    if (isDuplicate) {
+      dialog.ShowDialog("同じ名前のメニューが既に存在します。");
+      return;
+    }
+
+    // 4. 新しいメニューを作成
+    const newMenu = {
+      id: crypto.randomUUID(),
+      sectionId: sectionId,
+      name: menuName,
+      icon: "",
+      order: existingMenus.filter((m) => m.sectionId === sectionId).length,
+      legacyKey: menuName,
+    };
+
+    // 5. メニューリストに追加して保存
+    existingMenus.push(newMenu);
+    SaveMenuList(existingMenus);
+
+    // 6. ダイアログを閉じる
+    closeDialog();
+
+    // 7. セクションを再描画
+    sectionButton.click();
+  };
+
+  /* ---------------------------------------------
+   *  10. 閉じるボタンのクリックイベント
+   * --------------------------------------------- */
+  closeBtn.onclick = () => {
+    closeDialog();
+  };
+}
+
+/* ==========================================================
+ * 画面ロード時処理
+ * ========================================================== */
+document.addEventListener("DOMContentLoaded", function () {
+  /* ---------------------------------------------
+   *  1. ストレージデータの初期化
+   * --------------------------------------------- */
+  InitializeStorageData();
+
+  /* ---------------------------------------------
+   *  2. ヘッダーカラーの設定
+   *  作成日 : 2025/09/08
+   *  更新日 : 2025/12/22
+   * --------------------------------------------- */
+  ApplyHeaderColor();
+
   /* 事前定義 */
-  // 1.セクションの要素を取得
+  // 1. セクションの要素を取得
   const Section = document.getElementById("SectionContainer");
-  // 2.メニューリストの要素を取得
+  // 2. メニューリストの要素を取得
   const container = document.getElementById("menuContainer");
+  // 3. localStorageからセクションリストを取得
+  const sectionListData = GetSectionList();
 
   /* セクションリストの表示処理 */
-  sectionList.forEach((item) => {
-    // 1.ボタン要素作成
+  sectionListData.forEach((item) => {
+    // 1. ボタン要素作成
     const SectionButton = document.createElement("button");
-    // 2.ボタンのラベル要素を作成
+    // 2. ボタンのラベル要素を作成
     const SectionLabel = document.createElement("p");
-    // 3.ラベル内容を設定
-    SectionLabel.textContent = item.section;
-    // 4.ラベルクラスを設定
+    // 3. ラベル内容を設定
+    SectionLabel.textContent = item.name;
+    // 4. ラベルクラスを設定
     SectionLabel.className = "sectionText";
-    // 5.ボタンにラベルを追加
+    // 5. ボタンにラベルを追加
     SectionButton.appendChild(SectionLabel);
-    // 6.コンテナにボタンを追加
+    // 6. コンテナにボタンを追加
     Section.appendChild(SectionButton);
-    // 7.ボタンのクラスを設定
+    // 7. ボタンのクラスを設定
     SectionButton.className = "sectionButton";
 
     /* セクションボタンクリック時処理 */
     SectionButton.onclick = () => {
-      // 1.メニューの表示コンテナをクリア
+      // 1. メニューの表示コンテナをクリア
       container.innerHTML = "";
-      // 2.メニューリストをフィルタリング
-      const SectionContent = menuList.filter(
-        (menu) => menu.section === item.section
+      // 2. メニューリストをフィルタリング
+      const SectionContent = GetMenuList().filter(
+        (menu) => menu.sectionId === item.id
       );
 
       /* セクションボタンの状態設定 */
       document.querySelectorAll(".sectionButton.selected").forEach((sec) => {
-        // 1.背景色のクラスを削除
+        // 1. 背景色のクラスを削除
         sec.classList.remove("selected");
       });
-      // 2.選択されたセクションに選択状態を付与
+      // 2. 選択されたセクションに選択状態を付与
       SectionButton.classList.add("selected");
 
       /* 絞り込んだメニューの表示処理 */
       SectionContent.forEach((menuItem) => {
-        // 1.ボタン要素作成
+        // 1. ボタン要素作成
         const menuButton = document.createElement("button");
-        // 2.ボタンのラベルをメニュー名で設定
+        // 2. ボタンのラベルをメニュー名で設定
         const menuText = document.createElement("p");
-        // 3.ラベルの値にメニューのキーを設定
-        menuText.textContent = menuItem.key;
-        // 4.ラベルのクラスを設定
+        // 3. ラベルの値にメニュー名を設定
+        menuText.textContent = menuItem.name;
+        // 4. ラベルのクラスを設定
         menuText.className = "menuText";
-        // 5.ボタンにラベルを追加
+        // 5. ボタンにラベルを追加
         menuButton.appendChild(menuText);
 
         /* アイコンがある場合は画像要素を作成してアイコンに設定 */
         if (menuItem.icon) {
-          // 1.画像要素作成
+          // 1. 画像要素作成
           const img = document.createElement("img");
-          // 2.画像のパスを設定
+          // 2. 画像のパスを設定
           img.src = `/workInfo/asetts/img/icon/${menuItem.icon}`;
-          // 3.画像のクラスを設定
+          // 3. 画像のクラスを設定
           img.className = "IconImg";
-          // 4.ボタンに画像を追加
+          // 4. ボタンに画像を追加
           menuButton.appendChild(img);
         }
 
         /* ボタンのクリックイベント設定 */
         menuButton.onclick = () => {
-          // 1.クリック時にメモ画面へ遷移(キーをパラメータとして渡す)
-          window.location.href = `/workInfo/pages/memo.html?key=${encodeURIComponent(
-            menuItem.key
+          // 1. クリック時にメモ画面へ遷移(メニューIDをパラメータとして渡す)
+          window.location.href = `/workInfo/pages/memo.html?menuId=${encodeURIComponent(
+            menuItem.id
           )}`;
-          // 2.セッションに保持されたセクション情報の削除
+          // 2. セッションに保持されたセクション情報の削除
           if (sessionStorage.getItem("SectionInfo")) {
             sessionStorage.removeItem("SectionInfo");
           }
-          // 3.セクション情報をストレージに保存
-          sessionStorage.setItem("SectionInfo", menuItem.section);
+          // 3. セクション情報をストレージに保存
+          sessionStorage.setItem("SectionInfo", item.name);
         };
-        // 2.コンテナにボタンを追加
+
+        /* メニュー削除ボタンの作成 */
+        // 1. 削除ボタン要素作成
+        const deleteBtn = document.createElement("span");
+        // 2. ラベル設定
+        deleteBtn.textContent = "×";
+        // 3. クラス設定
+        deleteBtn.className = "menuDeleteButton";
+
+        /* メニュー削除ボタンのクリックイベント */
+        deleteBtn.addEventListener("click", (e) => {
+          // 1. 親ボタンのクリックイベントを抑止
+          e.stopPropagation();
+
+          // 2. 確認ダイアログを表示
+          dialog
+            .ShowConfirmDialog(
+              GetMessageInfo("confirm", "002", menuItem.name)
+            )
+            .then((result) => {
+              /* [はい]が押下された場合 */
+              if (result) {
+                // 1. メニューに紐づく投稿データを削除
+                DeleteMenuPosts(menuItem.id);
+                // 2. メニューリストからメニューを削除
+                DeleteMenuItem(menuItem.id);
+                // 3. セクションボタンを再クリックして画面を再描画
+                SectionButton.click();
+              }
+            });
+        });
+
+        // 4. 削除ボタンをメニューボタンに追加
+        menuButton.appendChild(deleteBtn);
+        // 5. コンテナにボタンを追加
         container.appendChild(menuButton);
-        // 3.ボタンのクラスを設定
+        // 6. ボタンのクラスを設定
         menuButton.className = "menuButton";
       });
+
+      /* メニュー追加ボタンの作成 */
+      // 1. ボタン要素作成
+      const addMenuButton = document.createElement("button");
+      // 2. ラベル設定
+      addMenuButton.textContent = "＋ メニュー追加";
+      // 3. クラス設定
+      addMenuButton.className = "menuButton menuAddButton";
+
+      /* メニュー追加ボタンのクリックイベント */
+      addMenuButton.onclick = () => {
+        // 1. メニュー追加ダイアログを表示
+        ShowAddMenuDialog(item.id, SectionButton);
+      };
+
+      // 4. コンテナに追加ボタンを追加
+      container.appendChild(addMenuButton);
     };
 
     /* 画面からの戻り時であれば、該当画面のセクションを表示する --2025/08/20 */
     if (sessionStorage.getItem("SectionInfo")) {
-      // 1.セッションに保持されているセクション情報を保持する
+      // 1. セッションに保持されているセクション情報を保持する
       const SectionInfo = sessionStorage.getItem("SectionInfo");
 
       /* セッションの保持されたセクションと一致するセクションがあれば処理 */
-      if (SectionInfo === item.section) {
-        // 1.セクションに遷移
+      if (SectionInfo === item.name) {
+        // 1. セクションに遷移
         SectionButton.click();
-        // 2.セクション情報を削除
+        // 2. セクション情報を削除
         sessionStorage.removeItem("SectionInfo");
       }
     }
   });
+
+  /* ---------------------------------------------
+   *  3. サイドバートグル処理（モバイル用）
+   * --------------------------------------------- */
+  const sidebarToggle = document.getElementById("sidebarToggle");
+  const sidebar = document.querySelector(".sideBar");
+
+  if (sidebarToggle && sidebar) {
+    // 1. モバイル時にトグルボタンを表示
+    const mediaQuery = window.matchMedia("(max-width: 480px)");
+    const handleMediaChange = (e) => {
+      sidebarToggle.style.display = e.matches ? "block" : "none";
+      if (!e.matches) {
+        sidebar.classList.remove("open");
+      }
+    };
+    mediaQuery.addEventListener("change", handleMediaChange);
+    handleMediaChange(mediaQuery);
+
+    // 2. トグルボタンクリックイベント
+    sidebarToggle.addEventListener("click", () => {
+      sidebar.classList.toggle("open");
+    });
+  }
 });
 
+/* ==========================================================
+ * バックアップ読み取りボタン押下時
+ * ========================================================== */
 /**
  * バックアップ読み取りボタン押下時
  */
 function ReadBackUp() {
-  // 1.ダイアログを表示
+  // 1. ダイアログを表示
   dialog.ShowConfirmDialog(GetMessageInfo("confirm", "004")).then((result) => {
     /* [はい]が押下された場合 */
     if (result) {
-      // 1.ファイル要素のイベントを発火
+      // 1. ファイル要素のイベントを発火
       document.getElementById("csvFile").click();
     } else {
       /* [いいえ]が押下された場合 */
@@ -210,21 +576,24 @@ function ReadBackUp() {
   });
 }
 
+/* ==========================================================
+ * バックアップ読み取りボタン押下時のファイル読み取り処理
+ * ========================================================== */
 /**
  * バックアップ読み取りボタン押下時のファイル読み取り処理
  */
 document.getElementById("csvFile").addEventListener("change", (event) => {
   /* 事前定義 */
-  // 1.選択されたファイルを取得
+  // 1. 選択されたファイルを取得
   const BackUpFile = event.target.files[0];
-  // 2.読み取り用reader
+  // 2. 読み取り用reader
   const FileRead = new FileReader();
 
   /* バックアップファイルを選択していないか、読み取れなかった場合 */
   if (!BackUpFile) {
-    // 1.アラート表示
+    // 1. アラート表示
     dialog.ShowDialog(GetMessageInfo("error", "001"));
-    // 2.処理終了
+    // 2. 処理終了
     return;
   }
 
@@ -233,61 +602,115 @@ document.getElementById("csvFile").addEventListener("change", (event) => {
 
   /* 読み取り処理実行 */
   FileRead.onload = (e) => {
-    // 1.バックアップ内容の取得
+    // 1. バックアップ内容の取得
     const BuckUpInfo = e.target.result;
-    // 2.念のためストレージの内容を初期化
-    localStorage.clear();
-    // 3.バックアップから取得した内容をストレージにセット
-    localStorage.setItem("savedPosts", BuckUpInfo);
-    // 4.処理終了
+
+    try {
+      const parsed = JSON.parse(BuckUpInfo);
+
+      // 2. ストレージの内容を初期化
+      localStorage.clear();
+
+      /* 新形式（version 2）の場合 */
+      if (parsed.version === 2) {
+        // 1. 投稿データを復元
+        localStorage.setItem(
+          "savedPosts",
+          JSON.stringify(parsed.savedPosts)
+        );
+        // 2. セクションリストを復元
+        localStorage.setItem(
+          "sectionList",
+          JSON.stringify(parsed.sectionList)
+        );
+        // 3. メニューリストを復元
+        localStorage.setItem("menuList", JSON.stringify(parsed.menuList));
+        // 4. ヘッダーカラーを復元
+        if (parsed.selectedHeaderColor) {
+          localStorage.setItem(
+            "selectedHeaderColor",
+            parsed.selectedHeaderColor
+          );
+        }
+      } else if (Array.isArray(parsed)) {
+        /* 旧形式（配列のみ）の場合 */
+        // 1. 投稿データのみ復元（セクション・メニューは再初期化される）
+        localStorage.setItem("savedPosts", JSON.stringify(parsed));
+      } else {
+        /* 旧形式（文字列直接保存）の場合 */
+        localStorage.setItem("savedPosts", BuckUpInfo);
+      }
+    } catch (parseError) {
+      /* JSON解析失敗時は旧形式として文字列をそのまま保存 */
+      localStorage.clear();
+      localStorage.setItem("savedPosts", BuckUpInfo);
+    }
+
+    // 3. 処理終了
     dialog.ShowDialog(GetMessageInfo("info", "001"), () => {
-      // 5.画面の再読み込み
+      // 4. 画面の再読み込み
       window.location.reload(true);
     });
   };
 
   /* 例外発生時 */
   FileRead.onerror = (e) => {
-    // 1.デバッグログ
+    // 1. デバッグログ
     console.error(e);
-    // 2.エラーダイアログ表示
+    // 2. エラーダイアログ表示
     dialog.ShowDialog(GetMessageInfo("error", "001"), () => {
-      // 3.画面の再読み込み
+      // 3. 画面の再読み込み
       location.reload();
     });
   };
 });
 
+/* ==========================================================
+ * バックアップ作成ボタン
+ * ========================================================== */
 /**
  * バックアップ作成ボタン
  */
 function CreateFullBackUp() {
   /* バリデーションチェック --2025/11/04 */
-  if (!localStorage.getItem("savedPosts")) {
-    // 1.ダイアログ表示 --同期処理に修正
+  if (
+    !localStorage.getItem("savedPosts") &&
+    !localStorage.getItem("menuList")
+  ) {
+    // 1. ダイアログ表示
     dialog.ShowDialog(GetMessageInfo("error", "002"));
-    // 2.処理終了
+    // 2. 処理終了
     return;
   }
 
   /* 事前定義 */
-  // 1.投稿された内容の取得
-  const BuckUpData = localStorage.getItem("savedPosts").toString();
+  // 1. 全データをオブジェクトとして取得
+  const backupData = {
+    savedPosts: JSON.parse(localStorage.getItem("savedPosts") || "[]"),
+    sectionList: JSON.parse(localStorage.getItem("sectionList") || "[]"),
+    menuList: JSON.parse(localStorage.getItem("menuList") || "[]"),
+    selectedHeaderColor:
+      localStorage.getItem("selectedHeaderColor") || null,
+    version: 2,
+  };
+
+  // 2. JSON文字列に変換
+  const BuckUpData = JSON.stringify(backupData);
 
   /* ダウンロード処理 */
-  // 1.バイナリデータの作成
-  const blob = new Blob([BuckUpData], { type: "text/csv;charset=utf-8;" });
-  // 2.URLの作成
+  // 1. バイナリデータの作成
+  const blob = new Blob([BuckUpData], { type: "application/json;charset=utf-8;" });
+  // 2. URLの作成
   const url = URL.createObjectURL(blob);
-  // 3.アンカーの作成
+  // 3. アンカーの作成
   const a = document.createElement("a");
-  // 4.遷移先に、項番2で作成したURLを設定
+  // 4. 遷移先に、項番2で作成したURLを設定
   a.href = url;
-  // 5.ファイル名設定
-  a.download = `フルバックアップ_${CreatYear()}.csv`;
-  // 6.アンカークリック時のイベントを発火
+  // 5. ファイル名設定
+  a.download = `フルバックアップ_${CreatYear()}.json`;
+  // 6. アンカークリック時のイベントを発火
   a.click();
-  // 7.URLの削除(ネット上のコピペのため不明点は調べる)
+  // 7. URLの削除
   URL.revokeObjectURL(url);
 }
 
@@ -295,21 +718,21 @@ function CreateFullBackUp() {
  * 現在年月日を作成し返す
  */
 function CreatYear() {
-  // 1.現在年月日を取得
+  // 1. 現在年月日を取得
   const now = new Date();
-  // 2.年を取得
+  // 2. 年を取得
   const year = now.getFullYear();
-  // 3.月を取得
+  // 3. 月を取得
   const month = String(now.getMonth() + 1).padStart(2, "0");
-  // 4.日を取得
+  // 4. 日を取得
   const day = String(now.getDate()).padStart(2, "0");
-  // 5.時間を取得
+  // 5. 時間を取得
   const hours = String(now.getHours()).padStart(2, "0");
-  // 6.分を取得
+  // 6. 分を取得
   const minutes = String(now.getMinutes()).padStart(2, "0");
-  // 7.秒を取得
+  // 7. 秒を取得
   const seconds = String(now.getSeconds()).padStart(2, "0");
-  // 8.整形して返す
+  // 8. 整形して返す
   return `${year}年${month}月${day}日_${hours}時${minutes}分${seconds}秒`;
 }
 
@@ -317,7 +740,7 @@ function CreatYear() {
  * ユーザー設定画面への遷移
  */
 function UserInfo() {
-  // 1.ユーザー設定画面へ遷移
+  // 1. ユーザー設定画面へ遷移
   window.location.href = "/workInfo/pages/userInfo.html";
 }
 
@@ -325,17 +748,21 @@ function UserInfo() {
  * 全データ削除
  */
 function AllDataDelete() {
-  // 1.ダイアログを表示
+  // 1. ダイアログを表示
   dialog
     .ShowConfirmDialog(GetMessageInfo("confirm", "002", "全てのデータ"))
     .then((result) => {
       /* [はい]が押下された場合 */
       if (result) {
-        // 1.データキーを指定して削除
+        // 1. 投稿データを削除
         localStorage.removeItem("savedPosts");
-        // 2.ダイアログ表示
+        // 2. セクションリストを削除
+        localStorage.removeItem("sectionList");
+        // 3. メニューリストを削除
+        localStorage.removeItem("menuList");
+        // 4. ダイアログ表示
         dialog.ShowDialog(GetMessageInfo("info", "002"), () => {
-          // 3.画面の再読み込み
+          // 5. 画面の再読み込み
           location.reload();
         });
       } else {

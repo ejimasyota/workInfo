@@ -1,20 +1,12 @@
 document.addEventListener("DOMContentLoaded", function () {
   /* 事前定義 */
-  // 1.基本色設定ボタン群
+  // 1. 基本色設定ボタン群
   const colorButtons = document.querySelectorAll(".CollorSetting");
-  // 2.ヘッダー
+  // 2. ヘッダー
   const header = document.querySelector(".HeaderInfo");
 
   /* 保存された色クラスがあれば、初期適用 */
-  // 1.ストレージ取得
-  const savedColorClass = localStorage.getItem("selectedHeaderColor");
-  // 2.クラス設定(後勝ち)
-  if (savedColorClass) {
-    Array.from(header.classList).forEach((Class)=>{
-      header.classList.remove(Class)
-    });
-    header.classList.add("HeaderInfo", savedColorClass);
-  }
+  ApplyHeaderColor();
 
   /* 背景色の設定処理 */
   colorButtons.forEach((button) => {
@@ -25,22 +17,24 @@ document.addEventListener("DOMContentLoaded", function () {
         Class.startsWith("SettingColor-")
       );
 
-      /* 背景色のクラスを削除(後勝ちでいいけど念のため) */
+      /* 背景色の設定 */
       if (colorClass) {
-        Array.from(header.classList).forEach((Class)=>{
-          header.classList.remove(Class)
+        // 1. DefoultHeaderクラスを除去
+        header.classList.remove("DefoultHeader");
+        // 2. 既存のSettingColor-*クラスを除去
+        Array.from(header.classList).forEach((cls) => {
+          if (cls.startsWith("SettingColor-")) {
+            header.classList.remove(cls);
+          }
         });
-
-        /* 新しい色クラスを適用 */
-        header.classList.add("HeaderInfo", colorClass);
-
-        /* localStorageに保存 */
+        // 3. 新しい色クラスを適用
+        header.classList.add(colorClass);
+        // 4. localStorageに保存
         localStorage.setItem("selectedHeaderColor", colorClass);
       }
     });
   });
 });
-
 
 /**
  * 戻るイベント
