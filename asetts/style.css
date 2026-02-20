@@ -686,20 +686,45 @@ body.DialogActive .MessageDialog {
   margin-top: 5px;
 }
 
-/* サイドバートグルボタン（モバイル用） */
+/* サイドバートグルボタン（ヘッダー内、モバイル時のみ表示） */
 .sidebarToggleButton {
-  position: fixed;
-  top: 55px;
-  left: 5px;
-  z-index: 101;
-  width: 40px;
-  height: 40px;
-  font-size: 24px;
+  display: none;
+  width: 36px;
+  height: 36px;
+  font-size: 22px;
   background: #e0e0e0;
   border: 2px outset #fff;
   border-right: 2px outset #808080;
   border-bottom: 2px outset #808080;
   cursor: pointer;
+  flex-shrink: 0;
+  z-index: 101;
+}
+
+/* サイドバー内アクションボタン群（モバイル時のみ表示） */
+.sidebarActions {
+  display: none;
+}
+.sidebarActionBtn {
+  width: 100%;
+  text-align: center;
+  margin-bottom: 2px;
+}
+.sidebarDivider {
+  border: none;
+  border-top: 1px solid #808080;
+  margin: 6px 0;
+}
+
+/* モバイル用ツールバー（メモ画面フッター内、モバイル時のみ表示） */
+.mobileToolbar {
+  display: none;
+}
+.mobileToolbarRow {
+  display: flex;
+  gap: 4px;
+  margin-bottom: 4px;
+  align-items: center;
 }
 
 /* ==============================
@@ -793,71 +818,77 @@ body.DialogActive .MessageDialog {
     left: 0;
   }
 
-  /* 3. メインレイアウトを単一列に */
+  /* 3. サイドバー内アクションボタンをモバイル時に表示 */
+  .sidebarActions {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* 4. サイドバートグルボタンをヘッダー内に表示 */
+  .sidebarToggleButton {
+    display: block;
+  }
+
+  /* 5. メインレイアウトを単一列に */
   main {
     flex-direction: column;
   }
 
-  /* 4. メニューグリッドを2列に変更 */
+  /* 6. メニューグリッドを2列に変更 */
   .menuContainer {
     grid-template-columns: repeat(2, 1fr);
     gap: 6px;
     padding: 6px;
   }
 
-  /* 5. メニューリストを全幅に */
+  /* 7. メニューリストを全幅に */
   .menuList {
     margin: 10px;
     max-height: calc(100vh - 120px);
   }
 
-  /* 6. ヘッダーテキストのサイズを縮小 */
+  /* 8. ヘッダーテキストのサイズを縮小 */
   .HeaderText {
     font-size: 16px;
   }
 
-  /* 7. ヘッダーボタン群を非表示（トグル切り替え用） */
+  /* 9. ヘッダーボタン群を非表示（サイドバーに移動） */
   .ButtonWrapper {
     display: none;
   }
 
-  /* 8. ヘッダーボタン群の展開時 */
-  .ButtonWrapper.open {
-    display: flex;
-    flex-direction: column;
-    position: absolute;
-    top: 50px;
-    right: 0;
-    background: #e0e0e0;
-    border: 2px solid #808080;
-    padding: 8px;
-    z-index: 200;
+  /* 10. ヘッダー検索フィルターを非表示（フッターに移動） */
+  .SearchFilterWrapper {
+    display: none;
   }
 
-  /* 9. フッターの入力フォーム幅を100%に */
+  /* 11. モバイル用ツールバーを表示 */
+  .mobileToolbar {
+    display: block;
+    margin-bottom: 6px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid #bbb;
+  }
+
+  /* 12. フッターの入力フォーム幅を100%に */
   .FormInfo.w-500 {
     width: 100%;
   }
 
-  /* 10. 投稿リストの高さを可変に */
+  /* 13. 投稿リストの高さを可変に */
   #postList {
     height: calc(100vh - 350px);
     max-height: calc(100vh - 350px);
   }
 
-  /* 11. 検索フィルターを全幅に */
-  .SearchFilterWrapper {
-    width: 100%;
-    flex-direction: column;
-  }
-
-  /* 12. メニューボタンの高さを縮小 */
+  /* 14. メニューボタンの高さを縮小 */
   .menuButton {
     min-height: 70px;
     max-height: 70px;
   }
 
-  /* 13. ダイアログの幅を画面幅に合わせる */
+  /* 15. ダイアログの幅を画面幅に合わせる */
   .MessageDialog {
     min-width: auto;
     width: 90vw;

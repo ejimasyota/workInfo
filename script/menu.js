@@ -535,24 +535,23 @@ document.addEventListener("DOMContentLoaded", function () {
    *  3. サイドバートグル処理（モバイル用）
    * --------------------------------------------- */
   const sidebarToggle = document.getElementById("sidebarToggle");
-  const sidebar = document.querySelector(".sideBar");
+  const sidebar = document.getElementById("sideBar");
 
   if (sidebarToggle && sidebar) {
-    // 1. モバイル時にトグルボタンを表示
-    const mediaQuery = window.matchMedia("(max-width: 480px)");
-    const handleMediaChange = (e) => {
-      sidebarToggle.style.display = e.matches ? "block" : "none";
-      if (!e.matches) {
-        sidebar.classList.remove("open");
-      }
-    };
-    mediaQuery.addEventListener("change", handleMediaChange);
-    handleMediaChange(mediaQuery);
-
-    // 2. トグルボタンクリックイベント
+    // 1. トグルボタンクリックイベント
     sidebarToggle.addEventListener("click", () => {
       sidebar.classList.toggle("open");
     });
+  }
+});
+
+/* ==========================================================
+ * bfcache復帰時のヘッダーカラー再適用
+ * ========================================================== */
+window.addEventListener("pageshow", (event) => {
+  // 1. bfcacheからの復帰時にヘッダーカラーを再適用
+  if (event.persisted) {
+    ApplyHeaderColor();
   }
 });
 

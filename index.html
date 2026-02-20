@@ -10,8 +10,9 @@
   </head>
   <body>
     <header class="HeaderInfo DefoultHeader">
+      <button id="sidebarToggle" class="sidebarToggleButton">≡</button>
       <h2 class="HeaderText">メニュー</h2>
-      <ul class="ButtonWrapper">
+      <ul class="ButtonWrapper" id="headerButtonWrapper">
         <li>
           <button class="ButtonInfo" onclick="CreateFullBackUp()">
             バックアップ作成
@@ -37,8 +38,15 @@
     </header>
 
     <main>
-      <button id="sidebarToggle" class="sidebarToggleButton" style="display:none;">≡</button>
-      <aside class="sideBar">
+      <aside class="sideBar" id="sideBar">
+        <!-- モバイル用：サイドバー内にヘッダーボタンを複製 -->
+        <div id="sidebarActions" class="sidebarActions">
+          <button class="ButtonInfo sidebarActionBtn" onclick="CreateFullBackUp()">バックアップ作成</button>
+          <button class="ButtonInfo sidebarActionBtn" onclick="ReadBackUp()">バックアップ復元</button>
+          <button class="ButtonInfo sidebarActionBtn" onclick="AllDataDelete()">データ削除</button>
+          <button class="ButtonInfo sidebarActionBtn" onclick="UserInfo()">ユーザー設定</button>
+          <hr class="sidebarDivider" />
+        </div>
         <div id="SectionContainer" class="SectionContainer">
           <h3 class="SectionLabel">メニュー項目</h3>
         </div>

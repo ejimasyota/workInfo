@@ -76,6 +76,43 @@ document.addEventListener("DOMContentLoaded", () => {
   ApplyHeaderColor();
 });
 
+/* ==========================================================
+ * bfcache復帰時のヘッダーカラー再適用
+ * ========================================================== */
+window.addEventListener("pageshow", (event) => {
+  // 1. bfcacheからの復帰時にヘッダーカラーを再適用
+  if (event.persisted) {
+    ApplyHeaderColor();
+    ApplyPostTitleColor();
+  }
+});
+
+/* ==========================================================
+ * モバイル用検索イベント
+ * ========================================================== */
+/**
+ * モバイルツールバーの検索フォーム入力時イベント
+ */
+function MobileSearchEvent() {
+  // 1. モバイル検索フォームの値をPC側にも同期
+  const mobileForm = document.getElementById("MobileSearchWordForm");
+  const pcForm = document.getElementById("SearchWordForm");
+  if (pcForm) pcForm.value = mobileForm.value;
+  // 2. 検索処理を実行
+  SearchEvent();
+}
+
+/**
+ * モバイルツールバーの検索クリア処理
+ */
+function MobileClearSearch() {
+  // 1. モバイル検索フォームをクリア
+  const mobileForm = document.getElementById("MobileSearchWordForm");
+  if (mobileForm) mobileForm.value = "";
+  // 2. PC側の検索クリアも実行
+  ClearSearch();
+}
+
 /**
  * 投稿内容の保存処理
  * @returns {void}
@@ -162,7 +199,6 @@ function DisplayPostList() {
       * --------------------------------------------- */
       // 1. 画像配列を取得（後方互換性対応）
       const postImages = Post.images || (Post.image ? [Post.image] : []);
-      const postImageNames = Post.imagenames || (Post.imagename ? [Post.imagename] : []);
 
       if (postImages.length > 0) {
         /* 1. 画像ラッパー作成 */
@@ -632,8 +668,6 @@ function addPost() {
   const rawBody = document.getElementById("bodyInput").value.trim();
   // 3. 画像ファイル取得（複数）
   const files = Array.from(document.getElementById("imageInput").files);
-  // 4. 画像名を保持する要素を取得
-  const fileName = document.getElementById("SelectFileNameForm").value.trim();
 
   /* タイトルが空の場合は処理を終了 */
   if (!title) {

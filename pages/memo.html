@@ -12,7 +12,7 @@
     <header class="HeaderInfo DefoultHeader">
       <h2 class="HeaderText" id="HeaderText"></h2>
 
-      <ul class="ButtonWrapper">
+      <ul class="ButtonWrapper" id="memoHeaderButtons">
         <li>
           <button class="ButtonInfo" onclick="DeleteLearningInfo()">
             投稿内容削除
@@ -29,7 +29,7 @@
         </li>
       </ul>
 
-      <div class="SearchFilterWrapper">
+      <div class="SearchFilterWrapper" id="headerSearchFilter">
         <input
           type="text"
           id="SearchWordForm"
@@ -47,6 +47,28 @@
 
     <footer>
       <div class="footerContainer">
+        <!-- モバイル用：ツールバー（検索+操作ボタン） -->
+        <div id="mobileToolbar" class="mobileToolbar">
+          <div class="mobileToolbarRow">
+            <input
+              type="text"
+              id="MobileSearchWordForm"
+              class="FormInfo"
+              maxlength="100"
+              placeholder="フィルタリング"
+              oninput="MobileSearchEvent()"
+              style="flex: 1;"
+            />
+            <button class="ButtonInfo" onclick="MobileClearSearch()">クリア</button>
+          </div>
+          <div class="mobileToolbarRow">
+            <button class="ButtonInfo" onclick="DeleteLearningInfo()">削除</button>
+            <button class="ButtonInfo" onclick="PreateLearningInfo()">出力</button>
+            <button class="ButtonInfo" onclick="ScrollTop()">↑</button>
+            <button class="ButtonInfo" onclick="ScrollBottom()">↓</button>
+          </div>
+        </div>
+
         <!-- 1段目 -->
         <div class="footerInputContainer">
           <!-- タイトル -->
