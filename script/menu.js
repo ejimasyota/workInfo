@@ -371,13 +371,6 @@ document.addEventListener("DOMContentLoaded", function () {
    * --------------------------------------------- */
   InitializeStorageData();
 
-  /* ---------------------------------------------
-   *  2. ヘッダーカラーの設定
-   *  作成日 : 2025/09/08
-   *  更新日 : 2025/12/22
-   * --------------------------------------------- */
-  ApplyHeaderColor();
-
   /* 事前定義 */
   // 1. セクションの要素を取得
   const Section = document.getElementById("SectionContainer");
@@ -398,9 +391,51 @@ document.addEventListener("DOMContentLoaded", function () {
     SectionLabel.className = "sectionText";
     // 5. ボタンにラベルを追加
     SectionButton.appendChild(SectionLabel);
-    // 6. コンテナにボタンを追加
+
+    /* セクション削除ボタンの作成 */
+    // 1. 削除ボタン要素作成
+    const sectionDeleteBtn = document.createElement("span");
+    // 2. ラベル設定
+    sectionDeleteBtn.textContent = "×";
+    // 3. クラス設定
+    sectionDeleteBtn.className = "sectionDeleteButton";
+
+    /* セクション削除ボタンのクリックイベント */
+    sectionDeleteBtn.addEventListener("click", (e) => {
+      // 1. 親ボタンのクリックイベントを抑止
+      e.stopPropagation();
+
+      // 2. 確認ダイアログを表示
+      dialog
+        .ShowConfirmDialog(
+          GetMessageInfo("confirm", "002", item.name)
+        )
+        .then((result) => {
+          /* [はい]が押下された場合 */
+          if (result) {
+            // 1. セクションに属するメニュー一覧を取得
+            const menus = GetMenuList().filter((m) => m.sectionId === item.id);
+            // 2. 各メニューに紐づく投稿データを削除
+            menus.forEach((menu) => {
+              DeleteMenuPosts(menu.id);
+            });
+            // 3. メニューリストからセクションのメニューを削除
+            const filteredMenus = GetMenuList().filter((m) => m.sectionId !== item.id);
+            SaveMenuList(filteredMenus);
+            // 4. セクションリストからセクションを削除
+            const filteredSections = GetSectionList().filter((s) => s.id !== item.id);
+            SaveSectionList(filteredSections);
+            // 5. 画面の再読み込み
+            location.reload();
+          }
+        });
+    });
+
+    // 4. 削除ボタンをセクションボタンに追加
+    SectionButton.appendChild(sectionDeleteBtn);
+    // 5. コンテナにボタンを追加
     Section.appendChild(SectionButton);
-    // 7. ボタンのクラスを設定
+    // 6. ボタンのクラスを設定
     SectionButton.className = "sectionButton";
 
     /* セクションボタンクリック時処理 */
@@ -532,7 +567,25 @@ document.addEventListener("DOMContentLoaded", function () {
   });
 
   /* ---------------------------------------------
-   *  3. サイドバートグル処理（モバイル用）
+   *  3. セクション追加ボタンの作成
+   * --------------------------------------------- */
+  // 1. ボタン要素作成
+  const sectionAddButton = document.createElement("button");
+  // 2. ラベル設定
+  sectionAddButton.textContent = "＋ 項目追加";
+  // 3. クラス設定
+  sectionAddButton.className = "sectionAddButton";
+
+  /* セクション追加ボタンのクリックイベント */
+  sectionAddButton.onclick = () => {
+    ShowAddSectionDialog();
+  };
+
+  // 4. コンテナに追加ボタンを追加
+  Section.appendChild(sectionAddButton);
+
+  /* ---------------------------------------------
+   *  4. サイドバートグル処理（モバイル用）
    * --------------------------------------------- */
   const sidebarToggle = document.getElementById("sidebarToggle");
   const sidebar = document.getElementById("sideBar");
@@ -545,15 +598,6 @@ document.addEventListener("DOMContentLoaded", function () {
   }
 });
 
-/* ==========================================================
- * bfcache復帰時のヘッダーカラー再適用
- * ========================================================== */
-window.addEventListener("pageshow", (event) => {
-  // 1. bfcacheからの復帰時にヘッダーカラーを再適用
-  if (event.persisted) {
-    ApplyHeaderColor();
-  }
-});
 
 /* ==========================================================
  * バックアップ読み取りボタン押下時
@@ -735,12 +779,141 @@ function CreatYear() {
   return `${year}年${month}月${day}日_${hours}時${minutes}分${seconds}秒`;
 }
 
+/* ==========================================================
+ * セクション追加ダイアログ
+ * ========================================================== */
 /**
- * ユーザー設定画面への遷移
+ * セクション追加ダイアログを表示する
  */
-function UserInfo() {
-  // 1. ユーザー設定画面へ遷移
-  window.location.href = "/workInfo/pages/userInfo.html";
+function ShowAddSectionDialog() {
+  /* ---------------------------------------------
+   *  1. ダイアログ本体の作成
+   * --------------------------------------------- */
+  // 1. グループ要素作成
+  const dialogContainer = document.createElement("div");
+  // 2. クラス設定
+  dialogContainer.className = "MessageDialog";
+
+  /* ---------------------------------------------
+   *  2. セクション名入力フォームの作成
+   * --------------------------------------------- */
+  // 1. ラベル要素作成
+  const label = document.createElement("p");
+  // 2. ラベル設定
+  label.textContent = "セクション名を入力してください";
+  // 3. クラス設定
+  label.className = "dialogMessage";
+
+  // 4. 入力フォーム作成
+  const input = document.createElement("input");
+  // 5. 属性設定
+  input.type = "text";
+  input.maxLength = 50;
+  input.placeholder = "セクション名";
+  input.className = "FormInfo";
+  input.style.width = "100%";
+
+  /* ---------------------------------------------
+   *  3. ボタンコンテナの作成
+   * --------------------------------------------- */
+  const btnContainer = document.createElement("div");
+  btnContainer.className = "ConfirmButtonForm";
+
+  /* ---------------------------------------------
+   *  4. 追加ボタンの作成
+   * --------------------------------------------- */
+  const addBtn = document.createElement("button");
+  addBtn.textContent = "追加";
+  addBtn.classList.add("ButtonInfo");
+
+  /* ---------------------------------------------
+   *  5. 閉じるボタンの作成
+   * --------------------------------------------- */
+  const closeBtn = document.createElement("button");
+  closeBtn.textContent = "閉じる";
+  closeBtn.classList.add("ButtonInfo");
+
+  /* ---------------------------------------------
+   *  6. バックドロップの作成
+   * --------------------------------------------- */
+  const backdrop = document.createElement("div");
+  backdrop.className = "DialogBackDrop";
+
+  /* ---------------------------------------------
+   *  7. DOM組み立て
+   * --------------------------------------------- */
+  dialogContainer.appendChild(label);
+  dialogContainer.appendChild(input);
+  btnContainer.appendChild(addBtn);
+  btnContainer.appendChild(closeBtn);
+  dialogContainer.appendChild(btnContainer);
+  document.body.appendChild(backdrop);
+  document.body.appendChild(dialogContainer);
+
+  // 8. 初期フォーカス
+  input.focus();
+
+  /* ---------------------------------------------
+   *  8. 閉じる処理
+   * --------------------------------------------- */
+  const closeDialog = () => {
+    if (
+      document.body.contains(dialogContainer) &&
+      document.body.contains(backdrop)
+    ) {
+      document.body.removeChild(dialogContainer);
+      document.body.removeChild(backdrop);
+    }
+  };
+
+  /* ---------------------------------------------
+   *  9. 追加ボタンのクリックイベント
+   * --------------------------------------------- */
+  addBtn.onclick = () => {
+    // 1. 入力値を取得
+    const sectionName = input.value.trim();
+
+    // 2. バリデーション（空文字）
+    if (!sectionName) {
+      dialog.ShowDialog(GetMessageInfo("error", "006", "セクション名"));
+      return;
+    }
+
+    // 3. 重複チェック
+    const existingSections = GetSectionList();
+    const isDuplicate = existingSections.some(
+      (s) => s.name === sectionName
+    );
+    if (isDuplicate) {
+      dialog.ShowDialog("同じ名前のセクションが既に存在します。");
+      return;
+    }
+
+    // 4. 新しいセクションを作成
+    const newSection = {
+      id: crypto.randomUUID(),
+      name: sectionName,
+      icon: "",
+      order: existingSections.length,
+    };
+
+    // 5. セクションリストに追加して保存
+    existingSections.push(newSection);
+    SaveSectionList(existingSections);
+
+    // 6. ダイアログを閉じる
+    closeDialog();
+
+    // 7. 画面の再読み込み
+    location.reload();
+  };
+
+  /* ---------------------------------------------
+   *  10. 閉じるボタンのクリックイベント
+   * --------------------------------------------- */
+  closeBtn.onclick = () => {
+    closeDialog();
+  };
 }
 
 /**

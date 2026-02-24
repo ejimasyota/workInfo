@@ -7,7 +7,8 @@ body {
   background: #004c4c;
   margin: 0;
   line-height: inherit;
-  overflow-y: auto;
+  overflow: hidden;
+  height: 100vh;
 }
 /* 2. 全体にbox-sizingを指定 */
 * {
@@ -17,6 +18,7 @@ body {
 h2 {
   font-family: "MS UI Gothic", "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
   color: rgb(61, 61, 61);
+  margin: 0;
 }
 /* 4. 見出し */
 h3{
@@ -28,7 +30,6 @@ p {
   font-family: "MS UI Gothic", "MS Sans Serif", "Tahoma", "Verdana", sans-serif;
   color: rgb(61, 61, 61);
 }
-
 /********************************
 /* 2. ヘッダー
 /********************************/
@@ -52,12 +53,15 @@ p {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  position: relative;
+  position: fixed;
+  top: 0;
+  left: 0;
   padding: 0 20px;
+  z-index: 200;
 }
 /* 3. ヘッダー : デフォルト */
 .DefoultHeader {
-  background-color: #00ca92;
+  background-color: #3e3e3e;
 }
 
 /********************************
@@ -120,13 +124,13 @@ p {
 /* メニューコンテナ */
 main {
   display: flex;
-  height: 100vh;
+  height: calc(100vh - 50px);
+  margin-top: 50px;
 }
 /* メニューリスト */
 .menuList {
   margin: 20px;
-  overflow-y: scroll;
-  max-height: 630px;
+  overflow-y: auto;
   height: 100%;
   width: 100%;
 }
@@ -220,6 +224,7 @@ main {
 /* 1. サイドバー */
 .sideBar {
   width: 220px;
+  min-width: 220px;
   background-color: #e0e0e0;
   border-right: 2px solid #808080;
   display: flex;
@@ -227,7 +232,7 @@ main {
   padding: 10px;
   box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
   overflow-y: auto;
-  max-height: calc(100vh - 40px);
+  height: 100%;
   scrollbar-color: #a0a0a0 #d0d0d0;
   scrollbar-width: thin;
   z-index: 11;
@@ -258,6 +263,7 @@ main {
 }
 /* 4. セクションボタン */
 .sectionButton {
+  position: relative;
   background-color: #d4d0c8;
   border-top: 2px solid #fff;
   border-left: 2px solid #fff;
@@ -269,6 +275,7 @@ main {
   width: 100%;
   text-align: left;
   padding: 6px 10px;
+  padding-right: 28px;
   cursor: pointer;
 }
 .sectionButton:hover {
@@ -290,6 +297,44 @@ main {
   font-size: 20px;
   font-weight: bold;
   text-align: center;
+}
+/* セクション削除ボタン */
+.sectionDeleteButton {
+  position: absolute;
+  bottom: 2px;
+  right: 2px;
+  width: 18px;
+  height: 18px;
+  background-color: #ff4d4d;
+  color: white;
+  font-weight: bold;
+  border: solid 1px white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-size: 10px;
+  z-index: 10;
+}
+.sectionDeleteButton:hover {
+  background-color: #e14545;
+}
+/* セクション追加ボタン */
+.sectionAddButton {
+  background-color: transparent;
+  border: 2px dashed #808080;
+  color: #666;
+  font-size: 14px;
+  font-weight: bold;
+  width: 100%;
+  text-align: center;
+  padding: 6px 10px;
+  cursor: pointer;
+  margin-top: 4px;
+}
+.sectionAddButton:hover {
+  background-color: rgba(0, 0, 0, 0.05);
+  color: #333;
 }
 
 /* ダイアログ表示時の背景 */
@@ -477,13 +522,11 @@ body.DialogActive .MessageDialog {
 
 /* 投稿一覧 */
 #postList {
-  padding-top: 10px;
-  padding-left: 10px;
-  padding-right: 10px;
-  padding-bottom: 10px;
-  overflow-y: scroll;
-  height: 440px;
-  max-height: 440px;
+  padding: 10px;
+  padding-top: 60px;
+  padding-bottom: 280px;
+  overflow-y: auto;
+  height: 100vh;
 }
 
 /* 投稿内容 */
@@ -567,118 +610,7 @@ body.DialogActive .MessageDialog {
   background-color: #e14545;
 }
 
-/* コンテンツごとの枠線 */
-.ItemContainer {
-  position: relative;
-  margin: 10px;
-  margin-top: 45px;
-  border: solid 2px #c0c0c0;
-  border-radius: 6px;
-  padding: 10px;
-  width: 97%;
-}
-/* 枠線のラベル */
-.ItemLabel {
-  position: absolute;
-  font-size: 24px;
-  font-weight: bold;
-  padding-left: 5px;
-  padding-right: 5px;
-  padding-bottom: 0;
-  height: 20px;
-  left: 24px;
-  top: -18px;
-  background-color: #e0e0e0;
-  width: fit-content;
-}
 
-/* 基本色設定ボタン要素 */
-.CollorSetting {
-  width: 50px;
-  height: 50px;
-  border-radius: 0;
-  border: solid 1px #3f3f3f;
-}
-/* 基本色 */
-.SettingColor-green {
-  background-color: #00ca92;
-}
-.SettingColor-red {
-  background-color: #a4023d;
-}
-.SettingColor-black {
-  background-color: #3e3e3e;
-}
-.SettingColor-blue {
-  background-color: rgb(84, 84, 211);
-}
-.SettingColor-yellow {
-  background-color: rgb(186, 186, 0);
-}
-.SettingColor-purple {
-  background-color: rgb(172, 72, 172);
-}
-.SettingColor-orange {
-  background-color: rgb(221, 144, 0);
-}
-.SettingColor-pink {
-  background-color: rgb(253, 169, 183);
-}
-.SettingColor-brown {
-  background-color: rgb(142, 41, 41);
-}
-.SettingColor-gray {
-  background-color: rgb(143, 137, 137);
-}
-.SettingColor-cyan {
-  background-color: rgb(5, 182, 182);
-}
-.SettingColor-lime {
-  background-color: rgb(11, 180, 11);
-}
-
-/* 基本色設定のツールチップ関係 */
-.CollorSetting-wrapper {
-  position: relative;
-  display: inline-block;
-}
-.Tooltip {
-  visibility: hidden;
-  opacity: 0;
-  background-color: #333;
-  color: #fff;
-  text-align: center;
-  border-radius: 4px;
-  padding: 4px 8px;
-  position: absolute;
-  z-index: 1;
-  bottom: 110%;
-  left: 50%;
-  transform: translateX(-50%);
-  white-space: nowrap;
-  transition: opacity 0.2s;
-  font-size: 12px;
-}
-
-.CollorSetting-wrapper:hover .Tooltip {
-  visibility: visible;
-  opacity: 1;
-}
-
-/* ユーザー設定コンテナ */
-.userInfoContainer {
-  width: 700px;
-  margin-right: auto;
-  margin-left: auto;
-  border-radius: 0px;
-  background-color: #e0e0e0;
-  border-right: 2px solid #808080;
-  box-shadow: inset 1px 1px 0 #fff, inset -1px -1px 0 #808080;
-  overflow-y: auto;
-  max-height: calc(100vh - 40px);
-  scrollbar-color: #a0a0a0 #d0d0d0;
-  scrollbar-width: thin;
-}
 .SummaryDialogButtonForm {
   display: flex;
   justify-content: flex-end;
@@ -770,13 +702,13 @@ body.DialogActive .MessageDialog {
 
   /* 8. 投稿リストの高さを調整 */
   #postList {
-    height: calc(100vh - 300px);
-    max-height: calc(100vh - 300px);
+    height: 100vh;
+    padding-bottom: 320px;
   }
 
   /* 9. メニューリストの高さを調整 */
   .menuList {
-    max-height: calc(100vh - 100px);
+    height: 100%;
   }
 
   /* 10. ボタンの文字サイズを縮小 */
@@ -805,6 +737,7 @@ body.DialogActive .MessageDialog {
     top: 50px;
     height: calc(100vh - 50px);
     width: 220px;
+    min-width: 220px;
     transition: left 0.3s ease;
     z-index: 100;
   }
@@ -874,8 +807,8 @@ body.DialogActive .MessageDialog {
 
   /* 13. 投稿リストの高さを可変に */
   #postList {
-    height: calc(100vh - 350px);
-    max-height: calc(100vh - 350px);
+    height: 100vh;
+    padding-bottom: 380px;
   }
 
   /* 14. メニューボタンの高さを縮小 */

@@ -70,22 +70,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // 3. 画面の表示処理
   DisplayPostList();
 
- /* ---------------------------------------------
-  *  2. ヘッダーの背景色を設定
-  * --------------------------------------------- */
-  ApplyHeaderColor();
 });
 
-/* ==========================================================
- * bfcache復帰時のヘッダーカラー再適用
- * ========================================================== */
-window.addEventListener("pageshow", (event) => {
-  // 1. bfcacheからの復帰時にヘッダーカラーを再適用
-  if (event.persisted) {
-    ApplyHeaderColor();
-    ApplyPostTitleColor();
-  }
-});
 
 /* ==========================================================
  * モバイル用検索イベント
@@ -383,10 +369,6 @@ function DisplayPostList() {
       PostListElement.appendChild(PostListWrapper);
     });
 
-   /* ==========================================================
-    * タイトルエリア背景色の設定
-    * ========================================================== */
-    ApplyPostTitleColor();
 
    /* ==========================================================
     * 画面スクロール位置を設定
@@ -426,31 +408,6 @@ function DisplayPostList() {
   }
 }
 
-/**
- * 投稿タイトルエリアに背景色を適用する
- */
-function ApplyPostTitleColor() {
-  // 1. ストレージから背景色取得
-  const savedColor = localStorage.getItem("selectedHeaderColor");
-  if (!savedColor) return;
-
-  // 2. タイトルエリアの要素取得
-  const TitleAreas = document.querySelectorAll(".PostTitleWrapper");
-
-  // 3. タイトルエリアの色クラスを更新
-  TitleAreas.forEach((Element) => {
-    // 1. DefoultHeaderクラスを除去
-    Element.classList.remove("DefoultHeader");
-    // 2. 既存のSettingColor-*クラスを除去
-    Array.from(Element.classList).forEach((cls) => {
-      if (cls.startsWith("SettingColor-")) {
-        Element.classList.remove(cls);
-      }
-    });
-    // 3. 保存された背景色クラスを追加
-    Element.classList.add(savedColor);
-  });
-}
 
 /**
  * モーダルを閉じる処理
