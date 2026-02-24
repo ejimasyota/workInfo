@@ -701,10 +701,6 @@ body.DialogActive .MessageDialog {
   z-index: 101;
 }
 
-/* サイドバー内アクションボタン群（モバイル時のみ表示） */
-.sidebarActions {
-  display: none;
-}
 .sidebarActionBtn {
   width: 100%;
   text-align: center;
