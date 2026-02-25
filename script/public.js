@@ -1,6 +1,6 @@
 class DialogInfo {
   /* ダイアログの表示処理 */
-  ShowDialog(message = "") {
+  ShowDialog(message = "", callback = null) {
     // 1.ダイアログの親要素の作成
     const MessageDialog = document.createElement("div");
     // 2.ダイアログの親要素のクラス名を設定
@@ -36,6 +36,8 @@ class DialogInfo {
       document.body.removeChild(MessageDialog);
       // 2.バックドロップを閉じる
       document.body.removeChild(backdrop);
+      // 3.コールバックが指定されている場合、実行
+      if (callback) callback();
     };
   }
 
