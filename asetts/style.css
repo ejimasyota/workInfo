@@ -622,6 +622,15 @@ body.DialogActive .MessageDialog {
   margin-top: 5px;
 }
 
+.InputAreaDialog {
+  width: min(1000px, 92vw);
+  max-width: 92vw;
+}
+
+.InputAreaDialogTextArea {
+  height: clamp(240px, 55vh, 500px);
+}
+
 /* サイドバートグルボタン（ヘッダー内、モバイル時のみ表示） */
 .sidebarToggleButton {
   display: none;
@@ -767,6 +776,10 @@ body.DialogActive .MessageDialog {
   .SearchFilterWrapper {
     flex-wrap: wrap;
   }
+
+  .InputAreaDialogTextArea {
+    height: clamp(220px, 50vh, 420px);
+  }
 }
 
 /* モバイル (480px以下) */
@@ -871,5 +884,14 @@ body.DialogActive .MessageDialog {
     min-width: auto;
     width: 90vw;
     max-width: 90vw;
+  }
+
+  .SummaryDialogButtonForm {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .InputAreaDialogTextArea {
+    height: clamp(180px, 42vh, 320px);
   }
 }

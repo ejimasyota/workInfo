@@ -889,7 +889,7 @@ function CreateTextArea() {
   // 1. グループ要素作成
   const dialogContainer = document.createElement("div");
   // 2. クラス設定
-  dialogContainer.classList.add("MessageDialog", "w-1000", "max-w-1000");
+  dialogContainer.classList.add("MessageDialog", "InputAreaDialog");
 
   /* ==========================================================
    * 背景クリックの無効化
@@ -905,7 +905,7 @@ function CreateTextArea() {
   // 2. プレースホルダーの作成
   textArea.placeholder = "詳細・・・";
   // 3. クラス設定
-  textArea.classList.add("TextAreaForm", "w-full", "h-500");
+  textArea.classList.add("TextAreaForm", "w-full", "InputAreaDialogTextArea");
   // 4. ID設定
   textArea.id = "SummaryTextArea";
   // 5. 値の設定
