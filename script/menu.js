@@ -365,9 +365,6 @@ document.addEventListener("DOMContentLoaded", function () {
       // 2. 選択されたセクションに選択状態を付与
       SectionButton.classList.add("selected");
 
-      /* モバイル版対応 : サイドバーを閉じる */
-      sidebar.classList.remove("open")
-
       /* 絞り込んだメニューの表示処理 */
       SectionContent.forEach((menuItem) => {
         // 1. ボタン要素作成
