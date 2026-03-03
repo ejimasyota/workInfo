@@ -83,6 +83,10 @@ p {
   gap: 4px;
 }
 
+.hidden {
+  display: none !important;
+}
+
 /***************************************
 /* 4. ボタン関係
 /***************************************/
@@ -633,6 +637,43 @@ body.DialogActive .MessageDialog {
   z-index: 101;
 }
 
+.memoToolsToggleButton {
+  display: block;
+}
+
+.memoToolsBackdrop {
+  z-index: 998;
+}
+
+.memoToolsDialog {
+  z-index: 1000;
+  width: min(720px, 92vw);
+}
+
+.memoToolsSearchRow {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.memoToolsSearchRow .FormInfo {
+  flex: 1;
+  margin: 0;
+}
+
+.memoToolsButtonGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.memoToolsDialogFooter {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+
 .sidebarActionBtn {
   width: 100%;
   text-align: center;
@@ -790,6 +831,14 @@ body.DialogActive .MessageDialog {
   /* 10. ヘッダー検索フィルターを非表示（フッターに移動） */
   .SearchFilterWrapper {
     display: none;
+  }
+
+  .memoToolsButtonGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .memoToolsSearchRow {
+    flex-wrap: wrap;
   }
 
   /* 11. モバイル用ツールバーを表示 */

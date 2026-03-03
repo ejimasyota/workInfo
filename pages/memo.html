@@ -10,68 +10,42 @@
   </head>
   <body>
     <header class="HeaderInfo DefoultHeader">
+      <button id="memoToolsToggle" class="sidebarToggleButton memoToolsToggleButton">≡</button>
       <h2 class="HeaderText" id="HeaderText"></h2>
+    </header>
 
-      <ul class="ButtonWrapper" id="memoHeaderButtons">
-        <li>
-          <button class="ButtonInfo" onclick="DeleteLearningInfo()">
-            投稿内容削除
-          </button>
-          <button class="ButtonInfo" onclick="PreateLearningInfo()">
-            内容出力
-          </button>
-          <button class="ButtonInfo" onclick="ScrollTop()">
-            一番上へ
-          </button>
-          <button class="ButtonInfo" onclick="ScrollBottom()">
-            一番下へ
-          </button>
-        </li>
-      </ul>
-
-      <div class="SearchFilterWrapper" id="headerSearchFilter">
+    <div id="memoToolsBackdrop" class="DialogBackDrop memoToolsBackdrop hidden"></div>
+    <div id="memoToolsDialog" class="MessageDialog memoToolsDialog hidden" aria-hidden="true">
+      <div class="memoToolsDialogHeader">
+        <p class="dialogMessage">ツール</p>
+      </div>
+      <div class="memoToolsSearchRow">
         <input
           type="text"
           id="SearchWordForm"
           class="FormInfo"
           maxlength="100"
-          placeholder="フィルタリング"
-          oninput="SearchEvent()"
+          placeholder="検索ワード"
         />
-        <button class="ButtonInfo w-200" onclick="ClearSearch()">
-          検索クリア
-        </button>
+        <button class="ButtonInfo" onclick="SearchEvent(); CloseMemoToolsDialog();">検索</button>
+        <button class="ButtonInfo" onclick="ClearSearch()">クリア</button>
       </div>
-    </header>
+      <div class="memoToolsButtonGrid">
+        <button class="ButtonInfo" onclick="DeleteLearningInfo()">投稿削除</button>
+        <button class="ButtonInfo" onclick="PreateLearningInfo()">投稿出力</button>
+        <button class="ButtonInfo" onclick="ScrollTop()">一番上へ</button>
+        <button class="ButtonInfo" onclick="ScrollBottom()">一番下へ</button>
+      </div>
+      <div class="memoToolsDialogFooter">
+        <button class="ButtonInfo" onclick="CloseMemoToolsDialog()">閉じる</button>
+      </div>
+    </div>
+
     <div id="postList"></div>
 
     <footer>
       <div class="footerContainer">
-        <!-- モバイル用：ツールバー（検索+操作ボタン） -->
-        <div id="mobileToolbar" class="mobileToolbar">
-          <div class="mobileToolbarRow">
-            <input
-              type="text"
-              id="MobileSearchWordForm"
-              class="FormInfo"
-              maxlength="100"
-              placeholder="フィルタリング"
-              oninput="MobileSearchEvent()"
-              style="flex: 1;"
-            />
-            <button class="ButtonInfo" onclick="MobileClearSearch()">クリア</button>
-          </div>
-          <div class="mobileToolbarRow">
-            <button class="ButtonInfo" onclick="DeleteLearningInfo()">削除</button>
-            <button class="ButtonInfo" onclick="PreateLearningInfo()">出力</button>
-            <button class="ButtonInfo" onclick="ScrollTop()">↑</button>
-            <button class="ButtonInfo" onclick="ScrollBottom()">↓</button>
-          </div>
-        </div>
-
-        <!-- 1段目 -->
         <div class="footerInputContainer">
-          <!-- タイトル -->
           <div>
             <input
               type="text"
@@ -81,40 +55,33 @@
               placeholder="投稿タイトル"
             />
           </div>
-          <!-- 選択された画像 -->
           <div>
             <input
               type="text"
               id="SelectFileNameForm"
               class="FormInfo w-500"
               maxlength="100"
-              placeholder="選択された画像（最大4枚）"
+              placeholder="選択された画像名（最大4枚）"
               disabled
             />
           </div>
         </div>
 
-        <!-- 2段目 -->
         <div class="footerTextAreaContainer">
           <div>
             <textarea
               id="bodyInput"
-              placeholder="説明"
+              placeholder="本文"
               class="TextAreaForm FormInfo w-full"
               style="height: 100px; max-width: 1004px; min-width: 1004px;"
             ></textarea>
           </div>
         </div>
 
-        <!-- 3段目 -->
         <div class="footerBtnList">
-          <button onclick="addPost()" class="ButtonInfo">
-            投稿
-          </button>
+          <button onclick="addPost()" class="ButtonInfo">投稿</button>
           <div>
-            <label for="imageInput" class="ButtonInfo ImgSelectButton"
-              >画像選択</label
-            >
+            <label for="imageInput" class="ButtonInfo ImgSelectButton">画像を選択</label>
             <input
               type="file"
               id="imageInput"
@@ -123,22 +90,13 @@
               style="display: none"
             />
           </div>
-          <button onclick="clearEvent()" class="ButtonInfo">
-            クリア
-          </button>
-          <button onclick="CreateTextArea()" class="ButtonInfo">
-            入力拡大
-          </button>
-          <button
-            onclick="backPage()"
-            id="backPageButton"
-            class="ButtonInfo"
-          >
-            戻る
-          </button>
+          <button onclick="clearEvent()" class="ButtonInfo">クリア</button>
+          <button onclick="CreateTextArea()" class="ButtonInfo">入力欄拡大</button>
+          <button onclick="backPage()" id="backPageButton" class="ButtonInfo">戻る</button>
         </div>
       </div>
     </footer>
+
     <script src="../script/public.js"></script>
     <script src="../script/utility.js"></script>
     <script src="../script/ImgPreviewDialog.js"></script>

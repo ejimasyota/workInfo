@@ -69,6 +69,7 @@ document.addEventListener("DOMContentLoaded", () => {
   SavePostArray = StrageSavePost ? JSON.parse(StrageSavePost) : [];
   // 3. 画面の表示処理
   DisplayPostList();
+  InitializeMemoToolsDialog();
 
 });
 
@@ -103,6 +104,56 @@ function MobileClearSearch() {
  * 投稿内容の保存処理
  * @returns {void}
  */
+function InitializeMemoToolsDialog() {
+  const toggleButton = document.getElementById("memoToolsToggle");
+  const dialog = document.getElementById("memoToolsDialog");
+  const backdrop = document.getElementById("memoToolsBackdrop");
+  const searchInput = document.getElementById("SearchWordForm");
+
+  if (!toggleButton || !dialog || !backdrop) return;
+
+  toggleButton.addEventListener("click", OpenMemoToolsDialog);
+  backdrop.addEventListener("click", CloseMemoToolsDialog);
+  document.addEventListener("keydown", (event) => {
+    if (event.key === "Escape" && !dialog.classList.contains("hidden")) {
+      CloseMemoToolsDialog();
+    }
+  });
+
+  if (searchInput) {
+    searchInput.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        SearchEvent();
+        CloseMemoToolsDialog();
+      }
+    });
+  }
+}
+
+function OpenMemoToolsDialog() {
+  const dialog = document.getElementById("memoToolsDialog");
+  const backdrop = document.getElementById("memoToolsBackdrop");
+  const searchInput = document.getElementById("SearchWordForm");
+
+  if (!dialog || !backdrop) return;
+
+  dialog.classList.remove("hidden");
+  dialog.setAttribute("aria-hidden", "false");
+  backdrop.classList.remove("hidden");
+  if (searchInput) searchInput.focus();
+}
+
+function CloseMemoToolsDialog() {
+  const dialog = document.getElementById("memoToolsDialog");
+  const backdrop = document.getElementById("memoToolsBackdrop");
+
+  if (!dialog || !backdrop) return;
+
+  dialog.classList.add("hidden");
+  dialog.setAttribute("aria-hidden", "true");
+  backdrop.classList.add("hidden");
+}
 function SavePostList() {
   // 1. ストレージへ投稿内容を保存
   localStorage.setItem("savedPosts", JSON.stringify(SavePostArray));

@@ -6,68 +6,10 @@
  * ※ 初回ロード時にlocalStorageへUUID付きで格納される初期データ                    *
  * ※ 以降のデータ管理はすべてlocalStorageを通じて行う                              *
  **********************************************************************************/
-const DEFAULT_MENU_LIST = [
-  { section: "自己学習", key: "調べたこと", icon: "" },
-  { section: "自己学習", key: "アクセス修飾子一覧", icon: "" },
-  { section: "自己学習", key: "Web通信について", icon: "" },
-  { section: "自己学習", key: "ネットワークの基礎", icon: "" },
-  { section: "自己学習", key: "サーバについて", icon: "" },
-  { section: "自己学習", key: "正規表現について", icon: "" },
-  { section: "業務活用", key: "議事録", icon: "" },
-  { section: "業務活用", key: "業務内のメモ", icon: "" },
-  { section: "業務活用", key: "電話対応のメモ", icon: "" },
-  { section: "業務活用", key: "勉強会のメモ", icon: "" },
-  { section: "業務活用", key: "用語", icon: "" },
-  { section: "基本情報", key: "基礎理論", icon: "" },
-  { section: "基本情報", key: "アルゴリズム", icon: "" },
-  { section: "基本情報", key: "コンピュータ構成", icon: "" },
-  { section: "基本情報", key: "システム構成", icon: "" },
-  { section: "基本情報", key: "ソフトウェア", icon: "" },
-  { section: "基本情報", key: "ハードウェア", icon: "" },
-  { section: "基本情報", key: "ユーザインタフェース", icon: "" },
-  { section: "基本情報", key: "情報メディア", icon: "" },
-  { section: "基本情報", key: "データベース", icon: "" },
-  { section: "基本情報", key: "ネットワーク", icon: "" },
-  { section: "基本情報", key: "セキュリティ", icon: "" },
-  { section: "基本情報", key: "システム開発", icon: "" },
-  { section: "基本情報", key: "ソフトウェア開発", icon: "" },
-  { section: "基本情報", key: "プロジェクトマネジメント", icon: "" },
-  { section: "基本情報", key: "サービスマネジメント", icon: "" },
-  { section: "基本情報", key: "システム監査", icon: "" },
-  { section: "基本情報", key: "システム戦略", icon: "" },
-  { section: "基本情報", key: "システム企画", icon: "" },
-  { section: "基本情報", key: "経営戦略マネジメント", icon: "" },
-  { section: "基本情報", key: "技術戦略マネジメント", icon: "" },
-  { section: "基本情報", key: "ビジネスインダストリ", icon: "" },
-  { section: "基本情報", key: "企業活動", icon: "" },
-  { section: "基本情報", key: "法務", icon: "" },
-  { section: "基本情報", key: "間違えた問題", icon: "" },
-  { section: "基本情報", key: "間違えた問題(計算)", icon: "" },
-  { section: "基本情報", key: "まとめて覚えたい内容", icon: "" },
-  { section: "基本情報", key: "間違えそうな問題の重点対策", icon: "" },
-  { section: "基本情報", key: "計算公式", icon: "" },
-  { section: "言語学習", key: "PHP", icon: "" },
-  { section: "言語学習", key: "SQL", icon: "" },
-  { section: "言語学習", key: "JavaScript", icon: "" },
-  { section: "OS", key: "Linux", icon: "" },
-  { section: "エディター", key: "Vim", icon: "Vim.png" },
-  { section: "個人用", key: "参考サイト", icon: "" },
-  { section: "個人用", key: "プロジェクトURL", icon: "" },
-  { section: "個人用", key: "アイデア", icon: "" },
-  { section: "プロジェクト", key: "宮崎", icon: "" },
-];
+const DEFAULT_MENU_LIST = [];
 
 // 2. デフォルトセクションリスト（初期データ用）
-const DEFAULT_SECTION_LIST = [
-  { section: "業務活用", icon: "" },
-  { section: "自己学習", icon: "" },
-  { section: "基本情報", icon: "" },
-  { section: "言語学習", icon: "" },
-  { section: "OS", icon: "" },
-  { section: "エディター", icon: "" },
-  { section: "個人用", icon: "" },
-  { section: "プロジェクト", icon: "" },
-];
+const DEFAULT_SECTION_LIST = [];
 
 // 3. ダイアログのインスタンスを作成
 const dialog = new DialogInfo();
@@ -115,46 +57,14 @@ function SaveSectionList(sectionList) {
  * デフォルトデータからUUID付きで初期化する
  */
 function InitializeStorageData() {
-  /* ---------------------------------------------
-   *  1. セクションリストの初期化
-   * --------------------------------------------- */
   if (!localStorage.getItem("sectionList")) {
-    // 1. デフォルトセクションにUUIDを付与して保存
-    const sections = DEFAULT_SECTION_LIST.map((item, index) => ({
-      id: crypto.randomUUID(),
-      name: item.section,
-      icon: item.icon,
-      order: index,
-    }));
-    localStorage.setItem("sectionList", JSON.stringify(sections));
+    localStorage.setItem("sectionList", JSON.stringify([]));
   }
 
-  /* ---------------------------------------------
-   *  2. メニューリストの初期化
-   * --------------------------------------------- */
   if (!localStorage.getItem("menuList")) {
-    // 1. セクションリストを取得してname->idマップを作成
-    const sections = JSON.parse(localStorage.getItem("sectionList"));
-    const sectionMap = {};
-    sections.forEach((s) => {
-      sectionMap[s.name] = s.id;
-    });
-
-    // 2. デフォルトメニューにUUIDを付与して保存
-    const menus = DEFAULT_MENU_LIST.map((item, index) => ({
-      id: crypto.randomUUID(),
-      sectionId: sectionMap[item.section] || null,
-      name: item.key,
-      icon: item.icon,
-      order: index,
-      legacyKey: item.key,
-    }));
-    localStorage.setItem("menuList", JSON.stringify(menus));
+    localStorage.setItem("menuList", JSON.stringify([]));
   }
 
-  /* ---------------------------------------------
-   *  3. 既存投稿データのマイグレーション
-   * --------------------------------------------- */
   MigratePostData();
 }
 
@@ -609,107 +519,85 @@ document.addEventListener("DOMContentLoaded", function () {
  * バックアップ読み取りボタン押下時
  */
 function ReadBackUp() {
-  // 1. ダイアログを表示
   dialog.ShowConfirmDialog(GetMessageInfo("confirm", "004")).then((result) => {
-    /* [はい]が押下された場合 */
-    if (result) {
-      // 1. ファイル要素のイベントを発火
-      document.getElementById("csvFile").click();
-    } else {
-      /* [いいえ]が押下された場合 */
+    if (!result) {
       return;
     }
+
+    OpenBackupFilePicker();
   });
 }
 
-/* ==========================================================
- * バックアップ読み取りボタン押下時のファイル読み取り処理
- * ========================================================== */
-/**
- * バックアップ読み取りボタン押下時のファイル読み取り処理
- */
-document.getElementById("csvFile").addEventListener("change", (event) => {
-  /* 事前定義 */
-  // 1. 選択されたファイルを取得
-  const BackUpFile = event.target.files[0];
-  // 2. 読み取り用reader
-  const FileRead = new FileReader();
+function OpenBackupFilePicker() {
+  const fileInput = document.createElement("input");
+  fileInput.type = "file";
+  fileInput.accept = ".json,.csv,application/json,text/csv";
+  fileInput.style.display = "none";
 
-  /* バックアップファイルを選択していないか、読み取れなかった場合 */
-  if (!BackUpFile) {
-    // 1. アラート表示
+  fileInput.addEventListener("change", (event) => {
+    HandleBackupFileSelected(event, fileInput);
+  });
+
+  document.body.appendChild(fileInput);
+  fileInput.click();
+}
+
+function HandleBackupFileSelected(event, fileInput) {
+  const backUpFile = event.target.files && event.target.files[0];
+  const fileRead = new FileReader();
+
+  const cleanup = () => {
+    if (fileInput && fileInput.parentNode) {
+      fileInput.parentNode.removeChild(fileInput);
+    }
+  };
+
+  if (!backUpFile) {
+    cleanup();
     dialog.ShowDialog(GetMessageInfo("error", "001"));
-    // 2. 処理終了
     return;
   }
 
-  /* ファイルの読み込み */
-  FileRead.readAsText(BackUpFile);
+  fileRead.readAsText(backUpFile);
 
-  /* 読み取り処理実行 */
-  FileRead.onload = (e) => {
-    // 1. バックアップ内容の取得
-    const BuckUpInfo = e.target.result;
+  fileRead.onload = (e) => {
+    const backupInfo = e.target.result;
 
     try {
-      const parsed = JSON.parse(BuckUpInfo);
-
-      // 2. ストレージの内容を初期化
+      const parsed = JSON.parse(backupInfo);
       localStorage.clear();
 
-      /* 新形式（version 2）の場合 */
       if (parsed.version === 2) {
-        // 1. 投稿データを復元
-        localStorage.setItem(
-          "savedPosts",
-          JSON.stringify(parsed.savedPosts)
-        );
-        // 2. セクションリストを復元
-        localStorage.setItem(
-          "sectionList",
-          JSON.stringify(parsed.sectionList)
-        );
-        // 3. メニューリストを復元
-        localStorage.setItem("menuList", JSON.stringify(parsed.menuList));
-        // 4. ヘッダーカラーを復元
+        localStorage.setItem("savedPosts", JSON.stringify(parsed.savedPosts || []));
+        localStorage.setItem("sectionList", JSON.stringify(parsed.sectionList || []));
+        localStorage.setItem("menuList", JSON.stringify(parsed.menuList || []));
         if (parsed.selectedHeaderColor) {
-          localStorage.setItem(
-            "selectedHeaderColor",
-            parsed.selectedHeaderColor
-          );
+          localStorage.setItem("selectedHeaderColor", parsed.selectedHeaderColor);
         }
       } else if (Array.isArray(parsed)) {
-        /* 旧形式（配列のみ）の場合 */
-        // 1. 投稿データのみ復元（セクション・メニューは再初期化される）
         localStorage.setItem("savedPosts", JSON.stringify(parsed));
       } else {
-        /* 旧形式（文字列直接保存）の場合 */
-        localStorage.setItem("savedPosts", BuckUpInfo);
+        localStorage.setItem("savedPosts", backupInfo);
       }
     } catch (parseError) {
-      /* JSON解析失敗時は旧形式として文字列をそのまま保存 */
       localStorage.clear();
-      localStorage.setItem("savedPosts", BuckUpInfo);
+      localStorage.setItem("savedPosts", backupInfo);
     }
 
-    // 3. 処理終了
+    cleanup();
     dialog.ShowDialog(GetMessageInfo("info", "001"), () => {
-      // 4. 画面の再読み込み
       window.location.reload(true);
     });
   };
 
-  /* 例外発生時 */
-  FileRead.onerror = (e) => {
-    // 1. デバッグログ
+  fileRead.onerror = (e) => {
+    cleanup();
     console.error(e);
-    // 2. エラーダイアログ表示
     dialog.ShowDialog(GetMessageInfo("error", "001"), () => {
-      // 3. 画面の再読み込み
       location.reload();
     });
   };
-});
+}
 
 /* ==========================================================
  * バックアップ作成ボタン
