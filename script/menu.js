@@ -366,8 +366,8 @@ document.addEventListener("DOMContentLoaded", function () {
       SectionButton.classList.add("selected");
 
       /* モバイル版対応 : サイドバーを閉じる */
-      if (sidebar.classList.contains("open")) {
-        sidebar.classList.remove('open')
+      if (document.getElementById("sideBar").classList.contains("open")) {
+        document.getElementById("sideBar").classList.remove('open')
       }
 
       /* 絞り込んだメニューの表示処理 */
