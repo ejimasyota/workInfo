@@ -471,6 +471,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
       /* セッションの保持されたセクションと一致するセクションがあれば処理 */
       if (SectionInfo === item.name) {
+        console.log("SectionButton",SectionButton)
         // 1. セクションに遷移
         SectionButton.click();
         // 2. セクション情報を削除
