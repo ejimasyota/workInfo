@@ -509,6 +509,10 @@ function SearchEvent() {
       }
     });
 
+    /* ---------------------------------------------
+     *  4. スクロール位置設定
+     * --------------------------------------------- */
+    ScrollTop();
  /* ==========================================================
   * 検索ワード未入力時
   * ========================================================== */
@@ -1227,6 +1231,7 @@ function ScrollTop() {
   if (postListEl) {
     postListEl.scrollTop = 0;
   }
+  CloseMemoToolsDialog();
 }
 
 /**
@@ -1239,6 +1244,7 @@ function ScrollBottom() {
   if (postListEl) {
     postListEl.scrollTop = postListEl.scrollHeight;
   }
+  CloseMemoToolsDialog();
 }
 
 /**
