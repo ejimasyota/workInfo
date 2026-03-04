@@ -10,6 +10,7 @@ const DEFAULT_MENU_LIST = [];
 
 // 2. デフォルトセクションリスト（初期データ用）
 const DEFAULT_SECTION_LIST = [];
+const AUTO_SELECT_SECTION_ID_KEY = "AutoSelectSectionId";
 
 // 3. ダイアログのインスタンスを作成
 const dialog = new DialogInfo();
@@ -47,6 +48,25 @@ function SaveMenuList(menuList) {
  */
 function SaveSectionList(sectionList) {
   localStorage.setItem("sectionList", JSON.stringify(sectionList));
+}
+
+/**
+ * メニューアイコンの表示URLを解決する
+ * @param {string} iconValue アイコン値
+ * @returns {string} 表示用URL
+ */
+function ResolveMenuIconSrc(iconValue) {
+  if (!iconValue) {
+    return "";
+  }
+
+  // data URL(アップロード済み)はそのまま利用
+  if (iconValue.startsWith("data:image/")) {
+    return iconValue;
+  }
+
+  // 既存のファイル名はアイコンディレクトリ配下として扱う
+  return `asetts/img/icon/${iconValue}`;
 }
 
 /* ==========================================================
@@ -167,6 +187,42 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
   input.className = "FormInfo";
   input.style.width = "100%";
 
+  // 6. アイコン選択ラベル
+  const iconLabel = document.createElement("p");
+  iconLabel.textContent = "アイコン画像（任意）";
+  iconLabel.className = "dialogMessage";
+
+  // 7. 選択ファイル名表示フォーム
+  const iconNameInput = document.createElement("input");
+  iconNameInput.type = "text";
+  iconNameInput.disabled = true;
+  iconNameInput.placeholder = "未選択";
+  iconNameInput.className = "FormInfo";
+  iconNameInput.style.width = "100%";
+
+  // 8. アイコン選択ボタン
+  const iconSelectLabel = document.createElement("label");
+  iconSelectLabel.textContent = "画像を選択";
+  iconSelectLabel.className = "ButtonInfo ImgSelectButton";
+  iconSelectLabel.style.display = "inline-flex";
+
+  // 9. アイコン入力フォーム
+  const iconInput = document.createElement("input");
+  iconInput.type = "file";
+  iconInput.accept = "image/*";
+  iconInput.style.display = "none";
+
+  // 10. アイコン選択コンテナ
+  const iconContainer = document.createElement("div");
+  iconContainer.style.display = "flex";
+  iconContainer.style.alignItems = "center";
+  iconContainer.style.gap = "8px";
+
+  // 11. 関連付け
+  const iconInputId = `iconInput-${crypto.randomUUID()}`;
+  iconInput.id = iconInputId;
+  iconSelectLabel.setAttribute("for", iconInputId);
+
   /* ---------------------------------------------
    *  3. ボタンコンテナの作成
    * --------------------------------------------- */
@@ -193,11 +249,19 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
   const backdrop = document.createElement("div");
   backdrop.className = "DialogBackDrop";
 
+  // 7.5. 選択アイコン保持
+  let selectedIconDataUrl = "";
+
   /* ---------------------------------------------
    *  7. DOM組み立て
    * --------------------------------------------- */
   dialogContainer.appendChild(label);
   dialogContainer.appendChild(input);
+  dialogContainer.appendChild(iconLabel);
+  dialogContainer.appendChild(iconNameInput);
+  iconContainer.appendChild(iconSelectLabel);
+  iconContainer.appendChild(iconInput);
+  dialogContainer.appendChild(iconContainer);
   btnContainer.appendChild(addBtn);
   btnContainer.appendChild(closeBtn);
   dialogContainer.appendChild(btnContainer);
@@ -208,7 +272,37 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
   input.focus();
 
   /* ---------------------------------------------
-   *  8. 閉じる処理
+   *  8.5. アイコン選択イベント
+   * --------------------------------------------- */
+  iconInput.addEventListener("change", () => {
+    const file = iconInput.files && iconInput.files[0];
+    if (!file) {
+      selectedIconDataUrl = "";
+      iconNameInput.value = "";
+      iconPreview.style.display = "none";
+      return;
+    }
+
+    if (!file.type.startsWith("image/")) {
+      dialog.ShowDialog(GetMessageInfo("error", "006", "画像ファイル"));
+      iconInput.value = "";
+      iconNameInput.value = "";
+      iconPreview.style.display = "none";
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      selectedIconDataUrl = event.target.result || "";
+      iconNameInput.value = file.name;
+      iconPreview.src = selectedIconDataUrl;
+      iconPreview.style.display = "block";
+    };
+    reader.readAsDataURL(file);
+  });
+
+  /* ---------------------------------------------
+   *  9. 閉じる処理
    * --------------------------------------------- */
   const closeDialog = () => {
     if (
@@ -221,7 +315,7 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
   };
 
   /* ---------------------------------------------
-   *  9. 追加ボタンのクリックイベント
+   *  10. 追加ボタンのクリックイベント
    * --------------------------------------------- */
   addBtn.onclick = () => {
     // 1. 入力値を取得
@@ -248,7 +342,7 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
       id: crypto.randomUUID(),
       sectionId: sectionId,
       name: menuName,
-      icon: "",
+      icon: selectedIconDataUrl,
       order: existingMenus.filter((m) => m.sectionId === sectionId).length,
       legacyKey: menuName,
     };
@@ -265,7 +359,7 @@ function ShowAddMenuDialog(sectionId, sectionButton) {
   };
 
   /* ---------------------------------------------
-   *  10. 閉じるボタンのクリックイベント
+   *  11. 閉じるボタンのクリックイベント
    * --------------------------------------------- */
   closeBtn.onclick = () => {
     closeDialog();
@@ -288,6 +382,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const container = document.getElementById("menuContainer");
   // 3. localStorageからセクションリストを取得
   const sectionListData = GetSectionList();
+  // 4. 自動選択対象IDを取得
+  const autoSelectSectionId = sessionStorage.getItem(AUTO_SELECT_SECTION_ID_KEY);
+  // 5. セクション復元フラグ
+  let restoredSection = false;
 
   /* セクションリストの表示処理 */
   sectionListData.forEach((item) => {
@@ -388,7 +486,7 @@ document.addEventListener("DOMContentLoaded", function () {
           // 1. 画像要素作成
           const img = document.createElement("img");
           // 2. 画像のパスを設定
-          img.src = `/workInfo/asetts/img/icon/${menuItem.icon}`;
+          img.src = ResolveMenuIconSrc(menuItem.icon);
           // 3. 画像のクラスを設定
           img.className = "IconImg";
           // 4. ボタンに画像を追加
@@ -477,7 +575,16 @@ document.addEventListener("DOMContentLoaded", function () {
         SectionButton.click();
         // 2. セクション情報を削除
         sessionStorage.removeItem("SectionInfo");
+        // 3. フラグ更新
+        restoredSection = true;
       }
+    }
+
+    /* セクション追加直後の自動選択 */
+    if (!restoredSection && autoSelectSectionId && autoSelectSectionId === item.id) {
+      SectionButton.click();
+      sessionStorage.removeItem(AUTO_SELECT_SECTION_ID_KEY);
+      restoredSection = true;
     }
   });
 
@@ -797,7 +904,10 @@ function ShowAddSectionDialog() {
     // 6. ダイアログを閉じる
     closeDialog();
 
-    // 7. 画面の再読み込み
+    // 7. 追加したセクションを自動選択するためIDを保持
+    sessionStorage.setItem(AUTO_SELECT_SECTION_ID_KEY, newSection.id);
+
+    // 8. 画面の再読み込み
     location.reload();
   };
 

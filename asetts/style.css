@@ -829,6 +829,14 @@ body.DialogActive .MessageDialog {
   .menuList {
     margin: 10px;
     max-height: calc(100vh - 120px);
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+  }
+
+  .menuContainer {
+    width: min(560px, 100%);
+    gap: 10px;
   }
 
   /* 8. ヘッダーテキストのサイズを縮小 */
@@ -877,6 +885,12 @@ body.DialogActive .MessageDialog {
   .menuButton {
     min-height: 70px;
     max-height: 70px;
+    border-radius: 8px;
+    box-shadow: 0 2px 0 #808080, 0 0 0 1px #fff inset;
+  }
+
+  .menuText {
+    font-size: 15px;
   }
 
   /* 15. ダイアログの幅を画面幅に合わせる */

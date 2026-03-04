@@ -625,21 +625,9 @@ function convertMarkdown(FormattText) {
   FormattText = FormattText.replace(/\*(.+?)\*/g, '<h3 class="md-h3">$1</h3>');
 
  /* ---------------------------------------------
-  *  5. [-]でリスト項目の作成
+  *  5. [-]でリスト項目の作成（ネスト対応）
   * --------------------------------------------- */
-  FormattText = FormattText.replace(
-    /(^|\n)(- .+(?:\n- .+)*)/g,
-    (_, prefix, block) => {
-      const items = block
-        .split("\n")
-        .map((line) => {
-          const text = line.replace(/^- /, "");
-          return `<li class="md-list-item">${text}</li>`;
-        })
-        .join("");
-      return `${prefix}<ul class="md-list">${items}</ul>`;
-    }
-  );
+  FormattText = ConvertMarkdownList(FormattText);
 
  /* ---------------------------------------------
   *  6. URL を自動リンク化
@@ -654,6 +642,81 @@ function convertMarkdown(FormattText) {
   * ========================================================== */
   // 1. 戻り値を返す
   return FormattText;
+}
+
+/**
+ * マークダウンの箇条書きをHTMLへ変換する（ネスト対応）
+ * @param {string} markdownText 箇条書きを含む文字列
+ * @returns {string} 変換後文字列
+ */
+function ConvertMarkdownList(markdownText) {
+  // 1. code blockは一時トークン化してリスト変換の対象外にする
+  const codeBlocks = [];
+  let normalizedText = markdownText.replace(/<pre[\s\S]*?<\/pre>/g, (block) => {
+    const token = `__CODEBLOCK_TOKEN_${codeBlocks.length}__`;
+    codeBlocks.push(block);
+    return token;
+  });
+
+  const lines = normalizedText.split("\n");
+  const listDepth = [];
+  let html = "";
+
+  const closeList = (targetIndent = -1) => {
+    while (listDepth.length > 0 && listDepth[listDepth.length - 1] > targetIndent) {
+      html += "</li></ul>";
+      listDepth.pop();
+    }
+  };
+
+  lines.forEach((line, index) => {
+    const listMatch = line.match(/^([ \t]*)- (.+)$/);
+    if (!listMatch) {
+      closeList();
+      html += line;
+      if (index < lines.length - 1) {
+        html += "\n";
+      }
+      return;
+    }
+
+    const indent = listMatch[1].replace(/\t/g, "    ").length;
+    const listText = listMatch[2];
+    const currentIndent = listDepth.length > 0 ? listDepth[listDepth.length - 1] : null;
+
+    if (currentIndent === null) {
+      html += `<ul class="md-list"><li class="md-list-item">${listText}`;
+      listDepth.push(indent);
+      return;
+    }
+
+    if (indent > currentIndent) {
+      html += `<ul class="md-list"><li class="md-list-item">${listText}`;
+      listDepth.push(indent);
+      return;
+    }
+
+    if (indent === currentIndent) {
+      html += `</li><li class="md-list-item">${listText}`;
+      return;
+    }
+
+    while (listDepth.length > 0 && listDepth[listDepth.length - 1] > indent) {
+      html += "</li></ul>";
+      listDepth.pop();
+    }
+
+    html += `</li><li class="md-list-item">${listText}`;
+  });
+
+  closeList();
+
+  // 2. 一時トークン化したcode blockを戻す
+  codeBlocks.forEach((block, blockIndex) => {
+    html = html.replace(`__CODEBLOCK_TOKEN_${blockIndex}__`, block);
+  });
+
+  return html;
 }
 
 /**
